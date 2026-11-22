@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gator",
+  "main": "apps/worker/src/index.ts",
+  "compatibility_date": "2026-11-01",
+  // Required by the OAuth library to fetch Client ID Metadata Documents safely.
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  // A smaller script is less for a cold isolate to parse.
+  "minify": true,
+  "assets": {
+    "directory": "apps/dashboard/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/mcp", "/api/*", "/authorize", "/oauth/*", "/.well-known/*"]
+  },
+  // No IDs: `wrangler deploy` creates a database and a namespace for each Worker name.
+  "d1_databases": [{ "binding": "DB" }],
+  "kv_namespaces": [{ "binding": "OAUTH_KV" }],
+  "triggers": { "crons": ["17 * * * *"] },
+  "secrets": { "required": ["MASTER_KEY", "OWNER_PASSWORD"] },
+  "observability": { "enabled": true }
+}

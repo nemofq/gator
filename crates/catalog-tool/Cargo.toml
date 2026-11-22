@@ -1,0 +1,11 @@
+[package]
+name = "catalog-tool"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+gator-core = { path = "../core" }
+serde_json.workspace = true
+toml = "1"

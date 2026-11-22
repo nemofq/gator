@@ -1,0 +1,14 @@
+id = "transcriptapi"
+name = "TranscriptAPI"
+description = "YouTube video transcripts and search: video details, a channel's videos and playlists"
+category = ["video"]
+mcp_url = "https://transcriptapi.com/mcp"
+signup_url = "https://transcriptapi.com/dashboard/api-keys"
+docs_url = "https://transcriptapi.com/docs/mcp"
+read_only = true
+key_hint = "Verify your email first."
+quota_signals = ["Payment required. You have no credits remaining."]
+
+[auth]
+header = "Authorization"
+format = "Bearer {key}"

@@ -1,0 +1,140 @@
+/* The /authorize consent page (its HTML is in apps/worker/src/authorize.ts). The dashboard
+   imports it too, for its sign-in form and the brand in its header. Link /theme.css first. */
+
+.consent {
+  width: min(400px, 100% - 32px);
+  margin: 12vh auto 32px;
+  box-sizing: border-box;
+  padding: 28px 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+.consent p {
+  margin: 0 0 12px;
+}
+
+/* The lockup, shared by the dashboard header, its sign-in page and this page. The box is the
+   wordmark's capitals (text-box), so centring the box centres the capitals. The mark is sized in
+   cap units (its snout, 31 of the drawing's 46 units, is one cap height) and lowered by half its
+   height less half a cap, so the centre of its drawing sits on the centre of the capitals whatever
+   the display font: no font's own metrics are involved. */
+.brand {
+  display: block;
+  width: fit-content;
+  font: 600 1.35rem / 1 var(--font-display);
+  font-size-adjust: cap-height 0.76;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  text-box: trim-both cap alphabetic;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand .mark {
+  display: inline-block;
+  width: calc(1cap * 63.5 / 31);
+  height: calc(1cap * 46 / 31);
+  margin-right: 0.36em;
+  vertical-align: calc(0.5cap - 1cap * 23 / 31);
+  color: var(--accent);
+  background: currentColor;
+  mask: url(/logo.svg) 0 0 / 100% 100% no-repeat;
+}
+
+/* The last letter's tracking would otherwise pad the right side. */
+.brand .word {
+  margin-right: -0.2em;
+}
+
+.consent .brand {
+  margin-bottom: 24px;
+}
+
+.consent h1 {
+  margin: 0 0 16px;
+  font: 600 1.15rem / 1.3 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.client {
+  font-weight: 600;
+}
+
+.host {
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+.note,
+.warning {
+  color: var(--text-2);
+  font-size: 0.9em;
+}
+
+.warning::before {
+  content: "! ";
+  font-weight: 700;
+  color: var(--danger);
+}
+
+.consent label {
+  display: block;
+  margin: 16px 0 4px;
+  font: 600 0.75rem var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.consent input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0 16px;
+}
+
+.actions button {
+  flex: 1;
+  min-height: 40px;
+  padding: 9px 14px;
+  /* Centred on the capitals, as in the dashboard's app.css: the cap height is 8 px in any font. */
+  font: 600 calc(8px / 0.76) var(--font-display);
+  font-size-adjust: cap-height 0.76;
+  text-box: trim-both cap alphabetic;
+  align-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+.actions button.primary {
+  color: var(--on-accent);
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* As in the dashboard: hover darkens the fill and leaves the border alone. */
+.actions button:hover {
+  background-color: color-mix(in srgb, var(--text) 8%, var(--surface-2));
+}
+
+.actions button.primary:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}

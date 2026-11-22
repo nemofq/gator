@@ -1,0 +1,1662 @@
+{
+  "source": "Tool names and the first 500 characters of each tool description, as each provider's MCP server returned them from tools/list on 2026-11-19 (Financial Modeling Prep and X: 2026-11-20). X has only the four tools its manifest switches on; its other 55 read the signed-in account. Schemas are left out. Provider names, descriptions and categories are from catalog/providers.",
+  "providers": [
+    {
+      "id": "redlisten",
+      "name": "Redlisten",
+      "description": "Reddit posts and comments: search, a subreddit's latest posts, threads, user history, mention counts",
+      "category": [
+        "social"
+      ],
+      "mcp_url": "https://redlisten.example.com/mcp",
+      "auth": {
+        "header": "Authorization",
+        "format": "Bearer {key}"
+      },
+      "has_key": true,
+      "tools": [
+        {
+          "name": "reddit_preview",
+          "description": "How much Reddit is talking about a keyword right now, with no API key: public post and comment counts for the last 30, 7 and 1 days, the change on the week before, mentions per day, the top communities and a sample of 10 posts, each with a snippet, its top reply and links. Cite the page URL when quoting the numbers and link the posts you mention. Every match, full comment threads and live delivery need a key (search_reddit and the other tools). A keyword not counted before returns status computi",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "subreddit_preview",
+          "description": "What a subreddit is talking about this week, with no API key: members, posts in the last 24 hours, comments an hour, the top 10 threads of the week, the newest 10 posts and the words that come up most in titles. Cite the page URL in the result when quoting it. Every post and comment live, as JSON or RSS, needs a key.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "search_reddit",
+          "description": "Full text search over recent Reddit posts and comments, newest first. Supports AND, OR, NOT, quoted phrases, subreddit:name and author:name. Each call counts one request on the key.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "latest_posts",
+          "description": "Newest posts from one subreddit, several subreddits (a+b) or all of Reddit. Newest first.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "latest_comments",
+          "description": "Newest comments from one subreddit or all of Reddit. Newest first.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "get_thread",
+          "description": "A post with its comment tree. Give the post id (with or without the t3_ prefix).",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "user_history",
+          "description": "Recent posts and comments by one Reddit user, newest first.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "keyword_trends",
+          "description": "How often a term is mentioned on Reddit per hour or per day, in posts and comments. Pro plan and above.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "compare_keywords",
+          "description": "Mention counts for up to five terms side by side. Team plan and above.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "top_communities",
+          "description": "Which subreddits mention a term most. Team plan and above.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "list_streams",
+          "description": "List the keyword streams on this API key, with their status.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "create_stream",
+          "description": "Create a keyword stream: a saved search that keeps collecting every matching post and comment. Give at least one of any_words, all_words, subreddits or authors.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "stream_items",
+          "description": "Newest matches collected by a keyword stream.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        }
+      ]
+    },
+    {
+      "id": "zoodata",
+      "name": "ZooData",
+      "description": "Amazon products and reviews: search, details, live prices, price and sales history, best sellers",
+      "category": [
+        "shopping"
+      ],
+      "mcp_url": "https://zoodata.example.com/mcp",
+      "auth": {
+        "header": "Authorization",
+        "format": "Bearer {key}"
+      },
+      "has_key": true,
+      "tools": [
+        {
+          "name": "get_account_balance",
+          "description": "Get account billing balance\n\nReturns the authenticated user's billing balance. CONTRACT-tier (USD wallet) customers receive a `usd` view; all other tiers receive a `credits` view in external decimal credits — plus a `usd` block with the granted/topped_up wallet split when the account owns a USD wallet (self-serve top-up).\n\nPolling this endpoint is the only way for CONTRACT-tier customers to observe their USD balance — per-call responses on other endpoints intentionally omit balance fields (ADR-0",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_products_search",
+          "description": "Search Amazon products\n\n1. Function\n\nDiscover candidate Amazon products by keyword, category and business metrics, returning a paginated list of the shared Product model (max 100 per page). Reads the catalog snapshot: omit dateRange or pass 'Nd' for the latest daily snapshot, or 'YYYY-MM' for that month's month-end snapshot (earliest 2026-02). Filters include price, monthly sales and revenue floors, growth rates, BSR and its 7-day change, rating, seller count, brand and seller lists, badges, ful",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_products_leaderboard",
+          "description": "Products Leaderboard V2\n\nReturn a product-level Top-N leaderboard for a category.\n\n`sales` ranks by monthly sales, `surging` by sales growth, and\n`newRelease` ranks Amazon New Release products by monthly sales.\nRelated: /products/search for custom filters and sorting.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"meta\": {\n    \"requestId\": \"Requestid\",\n    \"timestamp\": \"Timestamp\"\n  }\n}\n```\n\n*",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_competitors",
+          "description": "Competitor Lookup V2\n\nSearch competitor products by keyword, brand, ASIN, or category with filters.\n\nUse this to identify competing products around a specific listing or brand.\nExample: pass asin=\"B07FR2V8SH\" to find all products competing in the same\nkeywords and category. Data is based on the latest daily snapshot; results\nare paginated (max 100 per page).\nRelated: /products/search for broader keyword discovery.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: app",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_products_history",
+          "description": "Get a product's day-by-day page history\n\n1. Function\n\nReturn what one ASIN's product page showed on each observation day in a date range of up to 730 days. Per-point series (price, bsr, subBsr, monthlySalesFloor, rating, ratingCount, sellerCount) are aligned with timestamps; change series (title, imageUrl, bestSeller, amazonChoice, newRelease, aPlus, inventoryStatus, bsrCategory, subBsrCategory, parentAsin) record an entry only when the value changes. timestamps are observation days, not a conti",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_products_sales_trend",
+          "description": "Get a product's monthly sales trend\n\n1. Function\n\nReturn monthly sales and revenue floors for one ASIN and its parent, one point per month, on the same catalog-snapshot basis as /products/search. A finished month (pointKind=monthEnd) comes from that month's last-day snapshot and no longer changes; the current month (monthToDate) follows the latest snapshot and updates daily. Every month in the window has a point, so the series never skips a month. inCatalog=false means the product is not in that",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_products_detail",
+          "description": "Read products by ASIN or parent\n\n1. Function\n\nRead catalog facts for products you already know, in one of two mutually exclusive modes, both returning the shared Product model. asins mode takes 1 to 50 canonical ASINs and answers in request order; an ASIN missing from the snapshot comes back as status=empty with emptyReason=asin_not_found rather than being dropped. parentAsin mode pages through every product under one parent, ordered by monthlySalesFloor descending (nulls last) then asin. Omit d",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_search",
+          "description": "1. Function\n\nFind category markets by market size, product supply, prices, sales, new-product activity and competition. Compare candidate markets using full-market metrics and leading-sample profiles, with filtering, sorting and pagination.\n\n2. Use cases\n\nScreen categories by market size, sample performance, new-product activity and competition to narrow product research and compare candidate markets.\n\n3. Example\n\n{\"category\":{\"ids\":[\"679399011\"]},\"sampleType\":\"unitSalesTop100\",\"filters\":{\"avgPr",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_history",
+          "description": "1. Function\n\nReturn monthly historical profiles of category markets, with full-market and leading-sample Listing counts and sales totals, plus sample means for price, star rating, rating count, monthly unit sales and monthly revenue.\n\n2. Use cases\n\nTrack Listing counts, monthly unit sales, monthly revenue and sample prices and ratings across snapshots; compare market size and sample performance across months to support seasonality and longer-term trend research.\n\n3. Example\n\n{\"categoryIds\":[\"679",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_profile",
+          "description": "1. Function\n\nGet a comprehensive category market profile: full-market Listing counts, monthly unit sales and revenue, plus leading-sample per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue. Includes brands, sellers, content adoption, new-product windows and Top 3/5/10/20 concentration summaries for products, brands, sellers and seller countries.\n\n2. Use cases\n\nBuild a category market profile from full-market size and leading-sample sales, prices, ratin",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_price_distributions",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market, then group them by automatically generated price bands. Each group returns Listing count and share, monthly unit sales and share, monthly revenue and share, and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue.\n\n2. Use cases\n\nProfile the market by price band: compare Listing supply, unit sales and revenue across price ranges in the sele",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_rating_distributions",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market, then group them by star-rating range. Each group returns Listing count and share, monthly unit sales and share, monthly revenue and share, and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue.\n\n2. Use cases\n\nProfile customer-rating patterns by comparing Listing counts, unit sales and revenue across star-rating ranges; assess rating leve",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_rating_count_distributions",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market, then group them by rating-count range. Each group returns Listing count and share, monthly unit sales and share, monthly revenue and share, and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue.\n\n2. Use cases\n\nAssess accumulated rating volume by comparing sales and revenue for Listings with few versus many ratings, helping evaluate the r",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_listing_age_distributions",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market, then group them by listing-age range. Each group returns Listing count and share, monthly unit sales and share, monthly revenue and share, and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue.\n\n2. Use cases\n\nProfile the mix of newer and established Listings by comparing sales and revenue across listing-age ranges, and assess how strongl",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_fulfillment_distributions",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market, then group them by fulfillment type. Each group returns Listing count and share, monthly unit sales and share, monthly revenue and share, and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue.\n\n2. Use cases\n\nProfile supply by fulfillment type and compare Listing counts, sales, revenue, prices and ratings to inform fulfillment choices and",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_seller_country_distributions",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market, then group them by seller country. Each group returns Listing count and share, monthly unit sales and share, monthly revenue and share, and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue.\n\n2. Use cases\n\nProfile supply origins by seller country; compare Listing counts, sales and revenue to understand geographic competition in the selec",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_content_distributions",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market, then group them by A+/video configuration and provide an A+ aggregate. Each group returns Listing count and share, monthly unit sales and share, monthly revenue and share, and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue.\n\n2. Use cases\n\nAssess A+ and video adoption and compare sales, revenue and product characteristics across conten",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_top_product_concentrations",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market. Rank the sample using that same sales metric. Show the Top 3/5/10/20 product groups’ share of that sample’s monthly unit sales or monthly revenue. Return Listing counts, sales totals and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue, plus new-product counts, sales totals, shares and means for the preceding 1/3/6/12 months. Up to 20 l",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_brand_concentrations",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market. Aggregate and rank them by brand using that same sales metric. Show the Top 3/5/10/20 brand groups’ share of that sample’s monthly unit sales or monthly revenue. Return Listing counts, sales totals and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue, plus new-product counts, sales totals, shares and means for the preceding 1/3/6/12 mon",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_seller_concentrations",
+          "description": "1. Function\n\nSelect up to 100 Amazon Listings with the highest monthly unit sales or monthly revenue in the market. Aggregate and rank them by seller using that same sales metric. Show the Top 3/5/10/20 seller groups’ share of that sample’s monthly unit sales or monthly revenue. Return Listing counts, sales totals and per-Listing means for price, star rating, rating count, monthly unit sales and monthly revenue, plus new-product counts, sales totals, shares and means for the preceding 1/3/6/12 m",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_markets_listing_launch_trend",
+          "description": "1. Function\n\nShow the distribution of current leading Listings by first-launch month or year to profile the launch-date composition of a category’s leading sample.\n\n2. Use cases\n\nProfile the launch-date composition of the current leading sample by first-launch month or year; compare Listing counts across launch cohorts to understand the sample’s mix of newer and established products.\n\n3. Example\n\n{\"categoryIds\":[\"679399011\"],\"dateFrom\":\"2020-01-01\",\"dateTo\":\"2026-09-30\",\"sampleType\":\"unitSalesTo",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_categories",
+          "description": "Categories V2\n\nQuery Amazon category hierarchy by ID, path, parent, or keyword.\n\nUse this to discover category structure for filtering in other endpoints.\nExample: pass categoryKeyword=\"yoga\" to find matching categories, or\nparentCategoryPath=[\"Sports & Outdoors\"] to list child categories.\n\nQuery modes (mutually exclusive):\n- No parameters: Returns all root categories\n- categoryId: Get specific category by ID\n- categoryPath: Get specific category by path\n- parentCategoryId: Get children of paren",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_realtime_reviews",
+          "description": "Realtime Reviews V2\n\nFetch realtime reviews for a given ASIN.\n\nCursor-based pagination: omit cursor for the first page, then pass nextCursor\nfrom the previous response for subsequent pages. nextCursor=null means no\nmore data. Related: /reviews/search for review data with AI tags,\n/voc/analysis for aggregated insights.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"meta\": {\n    \"requestId\": \"Re",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_realtime_bestsellers",
+          "description": "Realtime Bestsellers V2\n\nGet the current Best Sellers (BSR-ranked) products for an Amazon category.\n\nData is collected on demand (typically 2-5s latency). Provide either\ncategoryId (Amazon category node id, e.g. 172282) or categoryPath\n(e.g. [\"Electronics\"]); page 1 = ranks 1-50, page 2 = 51-100. Discover\ncategory ids via /categories. Related: /products/search for daily catalog\ndata.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Respon",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_realtime_product",
+          "description": "Realtime Product V2 Legacy\n\n[DEPRECATED] Legacy realtime product shape — use openapi_v3_realtime_product.\n\nReturns the pre-#327 response (opaque buyboxWinner/ratingBreakdown/bestsellersRank,\nvariants keyed by `dimensions`, no top-level price). Kept for backward\ncompatibility; migrate to the v3 tool/endpoint for the typed protocol.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"meta\": {\n    \"re",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_reviews_search",
+          "description": "Search a product's reviews\n\n1. Function\n\nReturn individual review texts with their AI-generated tags for one ASIN, page by page (default 10 per page, max 20). The reviews are those of the parent the ASIN belongs to, not only of that child ASIN. Filters: star rating range, verified purchase, Vine program, helpful vote count, review date range and mediaTypes; all filters combine with AND. mediaTypes=['image'] keeps reviews with at least one image — about 8% of stored reviews carry images and revie",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_voc_analysis",
+          "description": "Voc Analyze V2\n\nVoice-of-Customer analysis by ASIN list or category: aggregated sentiment, ratings, and consumer intelligence.\n\nReturns aggregate insights only — sentiment distribution, rating breakdown,\npain points, buying factors, usage scenarios, and consumer profiles. No\nindividual review text or reviewer identity is included. Example: pass\nasins=[\"B07FR2V8SH\"] with period=\"6m\" for a 6-month VoC profile.\nASIN mode supports max 100 ASINs.\nRelated: /products/search to find ASINs, /categories f",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_voc_trend",
+          "description": "Get the review and demand-tag trend\n\n1. Function\n\nReturn how reviews and demand tags change over time for one ASIN set or one category: one point per week (Monday to Sunday, UTC) or month, each with reviewCount, average rating, rating distribution, sentiment counts and rates, and the count and share of the window's top tags per dimension (default painPoints, scenarios, buyingFactors; topN 1-30, default 10). Same scope and merge rules as /voc/analysis: ASIN mode covers every review of the parents",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_voc_watchlist_add",
+          "description": "Add an ASIN to your review watchlist\n\nSave an ASIN to your review watchlist — the shortlist of products you monitor for customer feedback.\n\nOnce an ASIN is on the list, analyze it any time with /voc/analysis\n(aggregated Voice-of-Customer insights) or /reviews/search (per-review\ndata). Idempotent: adding an ASIN already on the list is a no-op and does\nnot count against the cap. Up to 100 ASINs per Web Pro seat (at least\n100), shared across the Web Console and the API; /voc-watchlist/list\nreports ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_voc_watchlist_list",
+          "description": "List the ASINs in your review watchlist\n\nList the ASINs on your review watchlist, newest first.\n\nUse this to see which products you're monitoring, then drive\nVoice-of-Customer analysis over them with /voc/analysis. Shared with the\nWeb Console. Free of charge.\nRelated: /voc/analysis.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"meta\": {\n    \"requestId\": \"Requestid\",\n    \"timestamp\": \"Timestam",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_voc_watchlist_remove",
+          "description": "Remove an ASIN from your review watchlist\n\nRemove an ASIN from your review watchlist.\n\nDrops the product from your monitored shortlist. Free of charge.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"meta\": {\n    \"requestId\": \"Requestid\",\n    \"timestamp\": \"Timestamp\"\n  }\n}\n```\n\n**Output Schema:**\n```json\n{\n  \"properties\": {\n    \"success\": {\n      \"type\": \"boolean\",\n      \"title\": \"Success\",\n   ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_ecommerce_rerank",
+          "description": "Rerank documents for ecommerce search queries\n\nRerank a list of product documents by relevance to ecommerce search queries.\n\nUse this to improve product search result ordering. Pass one or more search\nqueries and a shared list of product documents (titles, descriptions, or\nconcatenated attributes). The model scores each document against each query\nand returns them sorted by relevance. Powered by a fine-tuned Qwen3-Reranker\nmodel optimized for ecommerce product matching.\n\nCredits: 1 credit per qu",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "submit_video_generation",
+          "description": "Submit a video generation task\n\nSubmit an asynchronous video generation task.\n\nStarts a Seedance generation job — text-to-video, image-to-video, or\nvideo-to-video depending on `content` — and returns a `taskId`\nimmediately; the video is produced in the background. Poll\n`GET /openapi/v2/model/video/tasks/{task_id}` with the returned id\nuntil `status` is terminal to obtain the video URL.\n\nAvailable to CONTRACT-tier API keys only, and only for models enabled\nfor the account (`GET /openapi/v2/model/",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "poll_video_task",
+          "description": "Poll a video generation task\n\nRetrieve the status and result of a video generation task.\n\nCall with the `taskId` returned by the submit endpoint and poll\nperiodically (e.g. every 5-10 seconds) until `status` is terminal. On\n`succeeded`, `output.video_url` holds the generated video; on `failed`,\n`error` holds the reason.\n\nAvailable to CONTRACT-tier API keys only. The task cost is settled\nagainst the submit-time hold when success is first observed — by this\npoll or by our background finalizer, so ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "list_video_models",
+          "description": "List the video models this account can call, with its contracted prices\n\nList the video generation models enabled for this account, with\nyour contracted prices.\n\nEach entry carries the model alias to pass as `model` on\n`POST /openapi/v2/model/video/generations`, its request limits\n(supported `resolutions`, `maxDurationSeconds`, and the per-request\nreference-asset caps `maxImages` / `maxVideos` / `maxAudios`), and\n`pricing`: your per-token rates in USD per 1M tokens, one row per\nresolution × with",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "create_video_asset",
+          "description": "Register a public URL as a video-generation asset\n\nRegister a publicly-reachable URL as an asset for use in video generation.\n\nReturns an `assetId` you can immediately reference in a video\ngeneration request as `asset://<assetId>` inside any\n`image_url.url` / `video_url.url` / `audio_url.url` field.\n\nThe provider downloads your URL asynchronously: the response\n`status` is typically `Processing` immediately after creation\nand transitions to `Active` within seconds. You can poll\n`GET /openapi/v2/m",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "list_video_assets",
+          "description": "List your video-generation assets\n\nList the calling customer's assets, newest first.\n\nListing is served entirely from our local registry — the live\nprovider status is intentionally not joined per-item to keep the\nlisting fast and cheap. Items therefore omit the `status` field\n(see `AssetListItem` in the response schema); call\n`GET /openapi/v2/model/video/assets/{assetId}` when you need the\ncurrent status of a specific asset.\n\nAvailable to CONTRACT-tier API keys only.\n\n### Responses:\n\n**200**: Su",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "get_video_asset",
+          "description": "Get a video-generation asset by id\n\nFetch a single asset's metadata and live status.\n\nReturns 404 if the asset doesn't exist or belongs to another\ncustomer (we deliberately do not distinguish to avoid leaking\nasset-id existence across tenant boundaries).\n\nAvailable to CONTRACT-tier API keys only.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"meta\": {\n    \"requestId\": \"Requestid\",\n    \"timesta",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "create_video_verification_session",
+          "description": "Create a real-person verification session\n\nOpen verificationUrl in a browser to complete personal consent and verification.\n\nThe provider redirects the browser to callbackUrl. A browser callback alone\nis not proof of verification: query this session to retrieve the trusted result.\nVerification URLs are sensitive and should only be shared with the person.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": t",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "get_video_verification_session",
+          "description": "Check real-person verification and bind the verified asset group\n\nAfter completing H5 verification, query until verified. Use sessionId as\nverificationSessionId when registering this person's assets. Provider errors\n(including incomplete or expired verification) are returned as errors.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"meta\": {\n    \"requestId\": \"Requestid\",\n    \"timestamp\": \"Times",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_image_embedding",
+          "description": "Generate fashion item embeddings from images\n\nGenerate feature embeddings for fashion items detected in an image.\n\nAutomatically detects fashion items (bags, shoes, clothing, watches, etc.) in the\nimage and generates feature embedding vectors for each detected item. Embeddings can\nbe used for visual similarity search, product recommendations, and image-based\nproduct matching. Optionally include fashion category tags and text-image relevance\nscores. Credits: 1 credit per request.\n\n### Responses:\n",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_image_detection",
+          "description": "Detect fashion items in images\n\nDetect fashion items in an image and return their bounding boxes.\n\nAnalyzes an image to locate fashion items such as bags, shoes, clothing, watches,\nglasses, and jewelry. Returns bounding box coordinates, category classification,\nand confidence scores for each detected item. Use the classes parameter to filter\nfor specific fashion categories. Credits: 1 credit per request.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/j",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_fashion_text_embedding",
+          "description": "Generate fashion text embeddings (768-dim vectors for similarity search)\n\nGenerate fashion-specific text embeddings using fine-tuned SigLIP2.\n\nEncode fashion text into 768-dim vectors aligned with the image embedding space.\nUse cases: text-to-image search, semantic product matching, catalog indexing.\nVectors are L2-normalized by default (dot product = cosine similarity).\nCredits: 1 credit per request.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_fashion_image_embedding",
+          "description": "Generate fashion image embeddings (768-dim vectors for similarity search)\n\nGenerate fashion-specific image embeddings using fine-tuned SigLIP2.\n\nEncode product images into 768-dim vectors aligned with the text embedding space.\nUse cases: visual similarity search, image-to-text matching, duplicate detection, catalog indexing.\nAccepts HTTPS URLs or base64-encoded images. Vectors are L2-normalized by default.\nCredits: 1 credit per request.\n\n### Responses:\n\n**200**: Successful Response (Success Resp",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_fashion_similarity",
+          "description": "Compute text-image similarity scores for fashion products\n\nCompute cosine similarity between text queries and product images.\n\nEncodes texts and images into the same 768-dim space, returns a score matrix.\nsimilarityScores[i][j] = relevance of textQueries[i] to imageUrls[j]. Higher = better match.\nEquivalent to text-embedding + image-embedding + dot product in one call.\nCredits: 1 credit per request.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_fashion_product_search",
+          "description": "Search fashion products by text query\n\nSearch fashion products by natural-language text query.\n\nSearches across 200M+ fashion products from major retailers. Supports\nbrand filtering, price range, and retailer domain allowlists/denylists.\nResults include product title, brand, price, image, and retailer link.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"meta\": {\n    \"requestId\": \"Requestid\",\n ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_fashion_image_search",
+          "description": "Search fashion products by image similarity\n\nSearch fashion products by visual similarity to a query image.\n\nUpload an image URL to find visually similar fashion products across\nthe catalog. Optionally specify a bounding box to focus on a specific\nitem in the image, and add a text description for better matching.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"meta\": {\n    \"requestId\": \"Request",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_product_traffic_terms_trend",
+          "description": "Get product traffic-term trend\n\n1. Function\n\nPer-keyword weekly traffic data for one ASIN; not ASIN-level aggregate traffic. Return weekly traffic-term timelines for an ASIN and up to 20 keywords, with a maximum 26-week range; the actual end date is `resolvedDateTo`. Results split impressions, positions, and ad activity by ORG/SP/SB/SBV/SPR; only `status=ok` items are charged.\n\n2. Use cases\n\nInspect when selected keywords gained or lost traffic for one ASIN and compare placements and ad activity",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_product_traffic_structure_profile",
+          "description": "Get product traffic structure profile\n\n1. Function\n\nASIN traffic structure and change drivers comparing the current week with the previous week; not a multi-week trend profile. Return current- and previous-week traffic profiles for up to 20 ASINs; the actual date is `resolvedDate`, and only `status=ok` items are charged.\n\n2. Use cases\n\nInvestigate week-over-week traffic changes using placement structure and keyword contributions. Use product-traffic-trend-profile for precomputed four-week conclu",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_product_traffic_terms",
+          "description": "Get product traffic terms\n\n1. Function\n\nReturn the target ASIN's traffic-keyword list for a single weekly snapshot, with filtering, sorting and pagination. Includes impression points, positions, traffic shares, estimated searches and ABA ranks; resolvedDate is the actual snapshot date. This is current-period discovery data, not a trend or time-series endpoint.\n\n2. Use cases\n\nDiscover the target ASIN's current traffic-driving keywords, for either your own product or a competitor. Then pass select",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_product_traffic_trend",
+          "description": "Get product traffic trend\n\n1. Function\n\nASIN-level weekly raw traffic data across all keywords; no keyword dimension. Return up to 26 complete Sunday-Saturday periods for up to 20 ASINs. Includes total, organic and advertising impression points, keyword coverage and distributions. Impression points are estimated traffic scores, not actual impression counts. Read items[].status before series; missing weeks are not filled with zero. Items follow request order; missing ASINs remain as empty items. ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_product_traffic_trend_profile",
+          "description": "Get product traffic trend profile\n\n1. Function\n\nASIN-level precomputed four-week traffic conclusions. Return traffic trend profiles for up to 20 ASINs. Only windowPeriods=[4] is currently supported and is the default when omitted. Includes impression, keyword-coverage and distribution evidence with metric directions. Items and window rows follow request order. Charge each ASIN once when at least one row has status=ok; empty profiles are free. The actual snapshot date is resolvedDate. detailLevel",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_keyword_detail",
+          "description": "Get keyword detail\n\n1. Function\n\nReturn a single-week raw statistical snapshot for one or more keywords: search demand, competition and advertising metrics from the latest available week on or before date. The observed period is reported in context.dataWindow; resolvedDate is the actual snapshot date. Both single and batch requests return data.context + data.items[]. This is snapshot data, not a scored market assessment.\n\n2. Use cases\n\nUse detail to compare current raw metrics when screening can",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_keyword_market_profile",
+          "description": "Get keyword market profile\n\n1. Function\n\nReturn six graded market dimensions with raw business evidence, observed ad coverage and annual seasonality at marketProfile.annualSeasonality for one or more keywords, using the latest available snapshot on or before date. Read level and interpretation for the category, and levelEvidence for the underlying values. Ad coverage is the fraction of distinct observed products seen in sponsored placements, not ad spend or impression share. No normalized scores",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_keyword_trend",
+          "description": "Get keyword trend\n\n1. Function\n\nReturn raw weekly time-series data for one or more keywords between dateFrom and dateTo, not precomputed trend conclusions. Both single and batch requests return data.context + data.items[].series[]. The date range cannot exceed 93 days; split longer history into multiple requests.\n\n2. Use cases\n\nUse trend to plot weekly search demand and ranking history or inspect when changes occurred. Use trend-profile for precomputed direction, volatility and supporting eviden",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_keyword_trend_profile",
+          "description": "Get keyword trend profile\n\n1. Function\n\nReturn precomputed trend profiles for one or more keywords over fixed 4, 8, 12, or 26-period windows, preserving keyword and requested-window order. A keyword is billed once when at least one window profile is available. Read trend for search-demand and ABA-rank direction, and trendEvidence for supporting metrics. These are observed conclusions, not forecasts or causal explanations.\n\n2. Use cases\n\nSummarize observed search-demand and ABA-rank direction ove",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_keyword_search_results",
+          "description": "Get keyword search results\n\n1. Function\n\nReturn factual product listings and absolute ranking positions for a keyword in the weekly period, with optional placement filtering. SERP aggregates and keyword market metrics are intentionally excluded and provided by dedicated metric endpoints.\n\n2. Use cases\n\nInspect which products, brands and placements appear for a keyword, and compare their ranking positions. Use market-profile for market-level assessments.\n\n### Responses:\n\n**200**: Successful Respo",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_keyword_extends",
+          "description": "Get keyword expansions\n\n1. Function\n\nReturn expanded keywords related to the seed keyword with search volume, rank, and relevance metrics. Supports `phrase` and `fuzzy` expansion.\n\n2. Use cases\n\nBuild candidate keyword lists for further research, listing content or advertising evaluation. Use detail or market-profile to assess the returned candidates.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_webtools_scrape",
+          "description": "Scrape a single URL\n\nScrape a single URL and return clean content.\n\nSpecify one or more of ``markdown`` / ``json`` / ``rawHtml`` in\n``formats``. ``json`` returns a structured page summary\n(title, page_type, key facts, main entities, etc.) — the extraction\nschema is built in, so you don't need to define one in your request.\n\nResponse ``meta`` carries the target page's HTTP status code, title,\ncanonical URL, description, and detected language. Always check\n``meta.statusCode`` before trusting the c",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_webtools_scrape_interactive",
+          "description": "Scrape a page after running browser actions\n\nScrape after executing a sequence of browser actions.\n\nSupports seven action types: ``wait``, ``click``, ``write``, ``press``,\n``scroll``, ``scrape``, ``executeJavascript``. (``screenshot`` and\n``pdf`` are intentionally excluded — their artifacts have no place in\nthe markdown/json/raw_html response surface.) Cumulative wait time\nacross all actions is capped at 60 seconds; over-cap requests are\nrejected with HTTP 422.\n\n### Responses:\n\n**200**: Successf",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_webtools_search",
+          "description": "Search the web\n\nSearch the web. Two modes governed by ``scrapeOptions``.\n\n- **Omit ``scrapeOptions``** → SERP-only: returns the search engine's raw\n  snippets (``url`` + ``meta`` with ``title`` / ``description`` /\n  ``source`` / ``publishedAt`` / ``imageUrl*``). No per-page fetch, fast\n  and cheap.\n- **Pass ``scrapeOptions: {}``** → deep-scrape every result, return\n  page-faithful Markdown under ``markdown``.\n- **Pass ``scrapeOptions: {\"format\": \"json\"}``** → deep-scrape every\n  result, return t",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_webtools_map",
+          "description": "Discover URLs on a website\n\nDiscover URLs from a website via sitemap and on-page link discovery.\n\nReturns a flat, relevance-ordered list of links (each with optional title /\ndescription). Use ``search`` to rank links by keyword relevance;\n``sitemapMode`` to control sitemap usage (``include`` / ``only`` /\n``skip``); ``includePaths`` / ``excludePaths`` to filter by URL path regex\n(≤50 patterns, ≤500 chars each); and ``limit`` (1-100000, default 5000) to\ncap results.\n\nSubdomains of the seed host ar",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_webtools_crawl_submit",
+          "description": "Submit a crawl job\n\nSubmit an async recursive crawl job.\n\nReturns an opaque ``id``; poll ``GET /webtools/crawl/{id}`` for status and\nfinished pages. ``robots.txt`` is always honored; external-domain links\nare not followed. ``limit`` defaults to 100 pages (cap 10000) — set it\nexplicitly when crawling a larger site. The returned id is bound to\nthe calling tenant: polling from a different API key returns 404.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_webtools_crawl_status",
+          "description": "Poll a crawl job\n\nPoll a crawl job's status. ``data[]`` contains already-scraped pages.\n\nPaginate with the ``skip`` / ``limit`` query params when ``data[]`` grows\nlarge. Returns 404 when the job id is unknown **or** belongs to a\ndifferent tenant — the two cases are deliberately indistinguishable so\njob-id existence does not leak across tenants.\n\n### Responses:\n\n**200**: Successful Response (Success Response)\nContent-Type: application/json\n\n**Example Response:**\n```json\n{\n  \"success\": true,\n  \"me",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_tiktok_products_search",
+          "description": "Tiktok Products Search\n\nSearch TikTok Shop products by keyword, category, and multi-dimensional filters.\n\nUse this to discover top-selling SPUs in a niche, narrow by category and\nprice / shipping signals, or surface fast-growing products by 30-day sales growth.\nExample: ``categoryPath=[\"Automotive & Motorcycle\"]`` with\n``categoryRankMax=100`` returns the category's top 100 sellers.\n\nData is from the latest daily snapshot (region = US in v1). Results are\npaginated (max 100 per page).\n\nMetric cove",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_tiktok_realtime_product",
+          "description": "Tiktok Realtime Product\n\nGet realtime TikTok Shop product detail for a single product (SPU) ID.\n\nUse this when you need the product's current state rather than\ndaily-updated values: current price, rating, units sold, inventory,\nshipping options, SKU variants (selectedOptions), and shop details. Data\nis collected on demand, so latency is higher than the daily-updated\nendpoints (typically 2-5 seconds). Only the US marketplace is available\ncurrently. Related: /tiktok/products/search for daily-updat",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_tiktok_realtime_video",
+          "description": "Tiktok Realtime Video\n\nGet realtime TikTok video detail for a single video URL.\n\nReturns the video's current state — title, engagement counters (plays,\nlikes, comments, shares), creator profile, soundtrack, and any shopping\nanchors (linked TikTok Shop products) — collected on demand, so latency is\nhigher than daily-updated endpoints (typically a few seconds). Only\ntiktok.com video URLs are accepted; short links are not supported. Related:\n/tiktok/videos/search for daily-updated data across many ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_tiktok_creators_search",
+          "description": "Tiktok Creators Search\n\nSearch TikTok creators by profile, category, content, and commerce signals.\n\nData is from the latest daily creator snapshot within the fallback window\n(region = US in v1). Related-product sales fields describe the overall\nproduct sales for SPUs the creator promoted, not creator-attributed GMV.\ncarryVideoSales30d / carryVideoRevenue30d are creator-attributed lower\nbounds (only carry videos with at least 500 plays are counted) and are\navailable as sortBy values; results sor",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_tiktok_videos_search",
+          "description": "Tiktok Videos Search\n\nSearch daily-updated TikTok videos by engagement, creator, and commerce signals.\n\nFilter by a keyword in the video title or description, play and like\ncounts, interaction rate, creator follower count, publish date, whether the\nvideo carries a shoppable product, and the product's category (by id or\npath). Keyword search filters only; results are still ordered by sortBy.\nEach video also returns the primary product's category id and path. Data is\nfrom the latest daily video co",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v2_tiktok_categories",
+          "description": "Tiktok Categories\n\nQuery the TikTok Shop category tree by ID, path, parent, or keyword.\n\nUse this to discover the category hierarchy for filtering in\n/tiktok/products/search. Example: pass ``parentCategoryPath=[\"Automotive\n& Motorcycle\"]`` to enumerate its direct children. The tree is\nEnglish-only and global (not region-scoped). ``productCount`` reflects\nthe latest US-region snapshot (v1).\n\nQuery modes (mutually exclusive):\n- No parameters: Returns all root categories (level 1)\n- categoryId: Sin",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "openapi_v3_realtime_product",
+          "description": "Realtime Product V3\n\nGet realtime product data for a given ASIN.\n\nUse this when you need the product's current state rather than\ndaily-updated values. Example: pass asin=\"B07FR2V8SH\" to get the current\nprice, rating, review count, Best Sellers Rank, inventory, variants\n(selectedOptions), and Buy Box offer. Data is collected on demand, so\nlatency is higher than the daily-updated endpoints (typically 2-5 seconds).\nRelated: /products/search for daily-updated catalog data, /products/history\nfor tren",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        }
+      ]
+    },
+    {
+      "id": "github",
+      "name": "GitHub",
+      "description": "GitHub repositories: files, commits, issues, pull requests, releases, code and repository search",
+      "category": [
+        "code"
+      ],
+      "mcp_url": "https://github.example.com/mcp",
+      "auth": {
+        "header": "Authorization",
+        "format": "Bearer {key}"
+      },
+      "has_key": true,
+      "tools": [
+        {
+          "name": "get_commit",
+          "description": "Get details for a commit from a GitHub repository",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_file_contents",
+          "description": "Get the contents of a file or directory from a GitHub repository",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_label",
+          "description": "Get a specific label from a repository.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_latest_release",
+          "description": "Get the latest release in a GitHub repository",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_me",
+          "description": "Get details of the authenticated GitHub user. Use this when a request is about the user's own profile for GitHub. Or when information is missing to build other tool calls.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_release_by_tag",
+          "description": "Get a specific release by its tag name in a GitHub repository",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_tag",
+          "description": "Get details about a specific git tag in a GitHub repository",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_team_members",
+          "description": "Get member usernames of a specific team in an organization. Limited to organizations accessible with current credentials",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_teams",
+          "description": "Get details of the teams the user is a member of. Limited to organizations accessible with current credentials",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "issue_read",
+          "description": "Get information about a specific issue in a GitHub repository.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_branches",
+          "description": "List branches in a GitHub repository",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_commits",
+          "description": "Get list of commits of a branch in a GitHub repository. Returns at least 30 results per page by default, but can return more if specified using the perPage parameter (up to 100).",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_issue_fields",
+          "description": "List issue fields for a repository or organization. Returns field definitions including name, type (text, number, date, single_select), and for single_select fields the list of valid option names. When repo is omitted, returns org-level fields directly.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_issue_types",
+          "description": "List supported issue types for a repository or its owner organization. When repo is omitted, returns org-level issue types directly.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_issues",
+          "description": "List issues in a GitHub repository. For pagination, use the 'endCursor' from the previous response's 'pageInfo' in the 'after' parameter.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_pull_requests",
+          "description": "List pull requests in a GitHub repository. If the user specifies an author, then DO NOT use this tool and use the search_pull_requests tool instead.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_releases",
+          "description": "List releases in a GitHub repository",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_repository_collaborators",
+          "description": "List collaborators of a GitHub repository. Results are paginated; the response includes `nextPage`, `prevPage`, `firstPage`, and `lastPage` fields. To get the next page, use the `nextPage` value as the `page` parameter.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_tags",
+          "description": "List git tags in a GitHub repository",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "pull_request_read",
+          "description": "Get information on a specific pull request in GitHub repository.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "run_secret_scanning",
+          "description": "Scan files, content, or recent changes for secrets such as API keys, passwords, tokens, and credentials.\n\nThis tool is intended for targeted scans of specific files, snippets, or diffs provided directly as content. The files parameter accepts either a single string or an array of strings containing raw file contents or diff hunks, and returns detected secrets with their locations and related secret scanning metadata. Content must not be empty. For full repository scanning, other mechanisms are a",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "search_code",
+          "description": "Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions, classes, or specific code patterns.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "search_commits",
+          "description": "Search for commits across GitHub repositories using GitHub's commit search syntax. Useful for finding specific changes, authors, or messages across one or many repositories. Searches the default branch only.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "search_issues",
+          "description": "Search issues using natural-language semantic matching. Best for conceptual or paraphrased queries (e.g. \"login fails after password reset\"). Already scoped to is:issue.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "search_pull_requests",
+          "description": "Search for pull requests in GitHub repositories using issues search syntax already scoped to is:pr",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "search_repositories",
+          "description": "Find GitHub repositories by name, description, readme, topics, or other metadata. Perfect for discovering projects, finding examples, or locating specific repositories across GitHub.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "search_users",
+          "description": "Find GitHub users by username, real name, or other profile information. Useful for locating developers, contributors, or team members.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "ui_get",
+          "description": "Fetch UI data for MCP Apps (labels, assignees, milestones, issue types, branches, issue fields, reviewers).",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        }
+      ]
+    },
+    {
+      "id": "firecrawl",
+      "name": "Firecrawl",
+      "description": "Web search and the text of any web page or PDF",
+      "category": [
+        "web"
+      ],
+      "mcp_url": "https://firecrawl.example.com/mcp",
+      "auth": {
+        "header": "Authorization",
+        "format": "Bearer {key}"
+      },
+      "has_key": true,
+      "tools": [
+        {
+          "name": "firecrawl_scrape",
+          "description": "Scrape one URL and return its content: markdown by default, or HTML, links, screenshots, branding data, or a targeted answer. Use it when the request identifies a page and needs its content or defined fields: the user gives a URL or names a page or PDF and wants it read or summarized, or wants prices, specs, contact details or a table from it. Use `firecrawl_search` when additional web sources are needed; on an authenticated session, `firecrawl_map` lists a site's URLs and `firecrawl_crawl` coll",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_map",
+          "description": "Enumerate URLs indexed under one website through Firecrawl without fetching each page's content. Use this when the request asks for a site's URL inventory, when several relevant pages must be located, or when the desired page URL is unknown. An optional `search` term narrows the URL list, while sitemap, subdomain, query-parameter, and result-limit options control coverage.\n\n`url` may omit the scheme (`example.com`); it is read as https. Returns matching URLs rather than page bodies. Retrieve one",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_search",
+          "description": "Use this when you need current or specific information from the web: recent events, latest releases and versions, prices, people and companies, statistics, or any fact that may have changed since your training data or that you are not sure of. Returns ranked results with query-relevant highlights; each web result is a title, URL, and description. Operators include quoted phrases, `-term`, `site:host`, `inurl:term`, `intitle:term`, and `related:host`; the set is non-exhaustive. `includeDomains` a",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "alexandria_library_search",
+          "description": "Check /library/skills first for any business workflow (sales or meeting prep, prospect lists, competitor, market or financial research, monitoring): it holds your team's and Firecrawl's step-by-step instructions for these tasks; follow a matching one instead of improvising. `cat /library/skills/search/<a-few-words-from-the-task>` (joined by hyphens) ranks them, your team's first; cat the path to read one. Explore the Alexandria library: Firecrawl's catalogue of data providers that return typed, ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "alexandria_library_read",
+          "description": "Run capabilities of Alexandria data providers and return their typed, sourced records: one, or up to ten in one call when a task needs several lookups. Alexandria is Firecrawl's library of data providers across companies, people, jobs, finance and filings, public records and government spending, real estate, places and restaurants, retail and prices, package registries and developer data, news, research, and more. For people and company enrichment or search, use people_company_enrich or people_c",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_save_skill",
+          "description": "Create or change one of the user's team skills: instructions an agent follows, naming capabilities as @provider/capability. Without id, creates one: write name, description and body, or copy a skill under /library/skills with from (its id: <id> for /library/skills/firecrawl/<id>, team:<slug> for /library/skills/team/<slug>); fields you also give override the copy, and a library skill copies its SKILL.md only. The new skill is enabled and listed in /library/skills/INDEX as /library/skills/team/<s",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_search_feedback",
+          "description": "Records schema-validated quality feedback for a prior `firecrawl_search` UUID `searchId`. A `good` rating requires a valuable result or a valuable source, `partial` either of those or at least one `missingContent` entry, and `bad` at least one `missingContent` entry or a query suggestion; caps are 50 `valuableResults`, 50 `valuableSources`, and 20 `missingContent` entries.\n\nEligibility is limited to successful searches within the feedback age window. The record is idempotent per search ID. Eligi",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_feedback",
+          "description": "Submit concise quality feedback for a completed search, scrape, parse, or map job. Provide the endpoint, job ID, rating, and relevant issue codes or small contextual fields; omit large page contents and raw outputs.\n\nFor an Alexandria session, set endpoint to `alexandria`, omit jobId, and provide requestedWebsite (url and requestedFunctionality), objective, rationale, and rating. objective is the underlying goal behind the session: what you or your user were ultimately trying to accomplish (for ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_crawl",
+          "description": "Start a multi-page crawl at a website URL, poll it to a terminal state, and return the final status and collected data. Scope can be bounded with include/exclude paths, depth, page limit, subdomain/external-link controls, sitemap handling, delay, and scrape options.\n\nCrawl results can be large; use conservative limits when full-site coverage is unnecessary. Webhooks and interactive scrape actions are unavailable in safe mode. `zeroDataRetention` runs the crawl with zero data retention and requir",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_check_crawl_status",
+          "description": "Retrieve the current status, progress, and available results for an existing crawl ID. This only reads Firecrawl job state and does not start or modify the crawl.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_agent",
+          "description": "Run web research that returns structured data when the URLs are not known or the answer spans several sites. Describe the fields you need in `prompt`, optionally pass a JSON `schema` and seed `urls`, and the research agent searches, navigates, reads pages, and returns JSON assembled across sources. Use it to research an entity plus its fields (founders, pricing, contact details), to build lists and datasets (companies, people, products, jobs, papers), and for pages that need navigation or intera",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_agent_status",
+          "description": "Retrieve progress or final results for a `firecrawl_agent` job ID. A `processing` response is non-terminal and does not contain the final research result. Check again after 15–30 seconds until the status is `completed` or `failed`; a typical research run takes one to three minutes and complex jobs can take longer. If the job cannot finish within the task's available time, use `firecrawl_search` and `firecrawl_scrape` to complete the requested output.\n\nReturns job status, progress information, an",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_interact",
+          "description": "Open or reuse a live browser session to navigate a page, click controls, fill and submit forms, or run browser code. Provide either `url` (the scheme may be omitted) or `scrapeId`, and either a natural-language `prompt` or executable `code`; code can run as Bash, Python, or Node with a bounded timeout.\n\nThe session runs in an isolated Firecrawl-hosted browser that never receives the end user's own browser cookies or credentials. By default it starts with no cookies or saved sessions; an optional",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_interact_stop",
+          "description": "Stop the live interact session associated with a `scrapeId` and release its resources. Returns a success confirmation.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_parse",
+          "description": "Parse one supported document into markdown, HTML, links, summary, targeted answers, or JSON matching a schema. Supported inputs include common HTML, PDF, Word, RTF, OpenDocument, and spreadsheet files; PDF parsing can be bounded with `pdfOptions.maxPages`.\n\nLocal MCP reads `filePath` from the server filesystem. Hosted MCP uses two calls: first provide `filePath` to receive upload instructions, upload locally, then call again with the returned `uploadRef`; do not send both fields together. Remote",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_monitor_create",
+          "description": "Create a recurring scrape, crawl, or search monitor that compares each check with its retained predecessor. The simple form accepts `page`/`pages` or `queries` plus a plain-language `goal`; the advanced `body` form controls targets, schedule, change-tracking formats, judging, retention, webhook, and notifications.\n\nIn the simple form, a `goal` is required. If `queries` contains one or more non-empty values and is supplied with `page`/`pages`, `queries` create the search target and page targets a",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_monitor_list",
+          "description": "List monitors for the authenticated account with optional pagination controls. Returns one page of monitor records and pagination metadata.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_monitor_get",
+          "description": "Retrieve one monitor by ID, including its configuration and current state. This does not run or modify the monitor.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_monitor_update",
+          "description": "Patch an existing monitor by ID; changes affect future scheduled checks. Pause or resume it with `status` (\"paused\" or \"active\"). Reschedule it with `scheduleText` (plain language, e.g. \"every 6 hours\") or `cron`, plus `timezone`; a new schedule without `timezone` runs in UTC. For other fields pass `body`, a partial monitor in the create shape (name, targets, goal, judgeEnabled, webhook, notification, retentionDays), e.g. `{\"name\": \"Pricing watch\"}`. The parameters are merged into `body` as `{\"s",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_monitor_delete",
+          "description": "Permanently delete a monitor by ID and stop its future schedule. This operation cannot be undone and returns deletion status.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_monitor_run",
+          "description": "Queue an immediate check for a monitor outside its normal schedule. This starts network work for the monitor's configured targets and returns the queued check.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "firecrawl_monitor_checks",
+          "description": "List historical checks for a monitor, optionally filtered by status and bounded by a result limit. Returns one page of check summaries and pagination metadata.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_monitor_check",
+          "description": "Retrieve one monitor check and its page-level results, optionally filtered by page status. Pages report `same`, `new`, `changed`, `removed`, or `error`; configured goal judging can add a meaningful-change decision.\n\nMarkdown tracking returns a unified text diff, JSON tracking returns field paths with previous/current values and a current snapshot, and mixed tracking returns both. Returns one page of results plus a `next` URL when more pages exist.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_research_search_papers",
+          "description": "Search paper metadata and abstracts with a natural-language query across the indexed corpus, which spans biomedical, life-science, and clinical literature (PubMed, bioRxiv, medRxiv) alongside arXiv and other scientific sources. Optional author, category, date, and sort options constrain or reorder results.\n\nSeveral distinct framings of the same question surface different papers than a single query does.\n\nReturns ranked papers with canonical IDs, titles, authors, and abstracts. Papers with licens",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_research_inspect_paper",
+          "description": "Retrieve canonical metadata for one paper ID, such as an arXiv, PMC, PMID, or DOI identifier. Returns the title, abstract, authors, categories, source IDs, and dates as markdown.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_research_related_papers",
+          "description": "Find citation-graph candidates from one to ten `seed_ids`; the first ID is the primary seed and later IDs are anchors. `mode` defaults to `similar` (co-citation/bibliographic coupling); `citers` returns papers citing a seed and `references` papers cited by a seed. `intent` ranks candidates.\n\nReturns ranked candidates and the evaluated pool size.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_research_read_paper",
+          "description": "Retrieve in-body passages from one paper that are relevant to a specific question. Full text is available only for indexed papers; `k` controls the number of passages.\n\nReturns matching passages or a notice when full text is unavailable.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_research_lookup_protein",
+          "description": "Look up one protein in UniProtKB/Swiss-Prot, the reviewed section of UniProt, and return what its curators state: subcellular location, function, and GO cellular-component terms. Use this when the question is where a named protein is located in the cell, what it does, or which compartment terms it has, and you have a UniProt accession (P05771), an entry name (KPCB_HUMAN), a gene symbol (PRKCB), or the exact protein name. One protein per call; `organism` defaults to human.\n\nEach location and func",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_developer_search",
+          "description": "Search an index of public repositories, GitHub issues, merged pull requests, repository READMEs, and code documentation for programming questions that need external documentation or upstream evidence.\n\nReturns ranked results with an ID, source type, URL, title, and the matched passages in markdown.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_gov_search",
+          "description": "Search US federal, state, and local statutes, regulations, codes, court opinions, and other government publications for legal or regulatory questions that need primary text. Clarify a missing jurisdiction or ambiguous as-of date before identifying the governing rule.\n\nOptional filters narrow results by jurisdiction, court, court type, cited law or case, and site. Filters keep only pages the index has labeled, so a filtered search can leave out relevant pages, and no results does not mean none ex",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "people_company_search",
+          "description": "Find people or companies you don't know yet, by filters. Not for someone you can already name: for a named person (with their company or domain, a LinkedIn URL or an email) or a named company, call people_company_enrich instead; a request naming one person is refused and pointed there. Set entity to \"person\" or \"company\" and give filters: people by title, seniority, function, employer and location; companies by industry, headcount, location, technology, keywords or founding year. Firecrawl asks ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "people_company_enrich",
+          "description": "Use this first when the user names a person (a name with a company or domain, a LinkedIn URL or an email) or a company and wants contact details, a profile or firmographics, such as the email of a founder at a given company. Use it, not people_company_search, whenever you have one of those identifiers. Give people (name with company or domain, LinkedIn URL, email or phone) or companies (domain, name or LinkedIn URL), up to 10 records per call. Each requested field runs a waterfall: Firecrawl tri",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "jobs_search",
+          "description": "Find job postings and check whether a posting is still open. Use it to: find jobs by role and place (query, with location, remote or posted_within_days); read one posting by url and tell whether it is still open; check up to 10 posting urls in one call; list a company's open roles from its own job board (company, a name or domain; add query for one role there); and see who is hiring for a role (query with group_by \"employer\"). Every row has the same normalized fields: title, company, location, r",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_credit_usage",
+          "description": "Get the authenticated Firecrawl team's current credit balance or its credit usage over the last 90 days. Use the current view to answer how many credits remain or to check billing-period boundaries. Use the historical view to answer what credits were spent on and when.\n\nThe current view returns `remainingCredits`, `planCredits`, `billingPeriodStart`, and `billingPeriodEnd`. Extra purchased or granted credits can make `remainingCredits` greater than `planCredits`. Billing-period dates may be null",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_usage_dashboard",
+          "description": "Open the Firecrawl sidebar to browse Alexandria providers, attach tool context to a conversation, and view account credits and monthly usage. Requires a connected Firecrawl account. Use firecrawl_credit_usage for data-only reporting.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_recommended_providers",
+          "description": "List data providers recommended for the connected team from its own Firecrawl activity in the last 30 days, each with the reason it was picked. Used by the Firecrawl sidebar; free, and it executes no provider.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_provider_directory",
+          "description": "List every Alexandria data provider, or every provider in one category, in a single call; with limit, only the first providers in catalogue order. Used by the Firecrawl sidebar; free, and it executes no provider. Use alexandria_library_search to browse the catalogue or read contracts (/library/<category>/<provider>/<capability>.md).",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "firecrawl_agent_activity",
+          "description": "Read the live progress of a firecrawl_agent job for the Firecrawl agent view: its steps, searches, pages read and credits so far, and the result once it finishes. Used by the agent view; use firecrawl_agent_status to read a job.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        }
+      ]
+    },
+    {
+      "id": "tavily",
+      "name": "Tavily",
+      "description": "Web search, recent news and the text of any web page",
+      "category": [
+        "search",
+        "news"
+      ],
+      "mcp_url": "https://tavily.example.com/mcp",
+      "auth": {
+        "header": "Authorization",
+        "format": "Bearer {key}"
+      },
+      "has_key": true,
+      "tools": [
+        {
+          "name": "tavily_search",
+          "description": "Search the web for current information on any topic. Use for news, facts, or data beyond your knowledge cutoff, and before answering any question about specific facts, figures or recent events. Returns snippets and source URLs. Results are short excerpts; read a page with tavily_extract to confirm what it says.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "tavily_extract",
+          "description": "Extract content from URLs. Returns raw page content in markdown or text format. Use it to read a page in full or to confirm a fact found in search results. Pages that could not be read are listed in failed_results; retry a timeout once, then try another source.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "tavily_crawl",
+          "description": "Crawl a website starting from a URL. Extracts content from pages with configurable depth and breadth.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "tavily_map",
+          "description": "Map a website's structure. Returns a list of URLs found starting from the base URL.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "tavily_research",
+          "description": "Perform comprehensive research on a given topic or question. Use this tool when you need to gather information from multiple sources, including web pages, documents, and other resources, to answer a question or complete a task. Returns a detailed response based on the research findings. Rate limit: 20 requests per minute.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        }
+      ]
+    },
+    {
+      "id": "transcriptapi",
+      "name": "TranscriptAPI",
+      "description": "YouTube video transcripts and search: video details, a channel's videos and playlists",
+      "category": [
+        "video"
+      ],
+      "mcp_url": "https://transcriptapi.example.com/mcp",
+      "auth": {
+        "header": "Authorization",
+        "format": "Bearer {key}"
+      },
+      "has_key": true,
+      "tools": [
+        {
+          "name": "get_youtube_transcript",
+          "description": "Get a YouTube video's transcript — pass `video_url` (a URL or 11-character ID).\n\nOptional `language`: a comma-separated priority list (e.g. `de,en,asr`). Omit it to get English, or the video's first available language. We return the first code that's available. `asr` = auto-generated captions (ASR = automatic speech recognition); `asr-<code>` = a specific auto language, e.g. `asr-hi`. Codes ignore region (`de` matches `de-DE`). The response's `language` field tells you exactly what you got — ask",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_youtube_video_info",
+          "description": "Free (no credit used). Basic oEmbed metadata (title, author, thumbnail) plus the list of available transcript languages for a YouTube video — call this before get_youtube_transcript to pick a language. Pass `video_url` (a URL or 11-character ID). Each language comes back as a code (e.g. `en`, or `asr-en` for auto-generated English) you can pass to get_youtube_transcript's `language` parameter. For view/like counts, publish date, description, duration, tags or related videos use get_video_metadat",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "search_youtube",
+          "description": "Search YouTube for videos, channels, playlists, or movies (paginated, ~20 results per page). First call: provide `query` (+ optional `search_type`, default video). Optional first-page filters: `sort` (relevance, the default, or views), `upload_date` (hour, today, week, month, year) and `duration` (short <4m, medium 4-20m, long >20m) — `upload_date` and `duration` apply to videos only. Subsequent calls: provide only the `continuation` token from the previous response (search_type and filters are ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_channel_latest_videos",
+          "description": "Get the ~15 most recent videos from a YouTube channel via RSS. Accepts @handle, channel URL, or UC... channel ID. Free — no credits consumed (an active plan or free credits is required, as for get_youtube_video_info). When YouTube's feed is unavailable, the list comes from the channel's uploads and `published` is approximate.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "search_channel_videos",
+          "description": "Search for videos within a specific YouTube channel (paginated, ~30 results per page). First call: provide `channel` (@handle, URL, or UC... ID) + `query`. Subsequent calls: provide the `continuation` token from the previous response. Returns results plus continuation_token/has_more. A page can come back empty while `has_more` is true — keep following the continuation token until `has_more` is false; an empty page does not mean the search is finished. Costs 1 credit per page.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_channel_videos",
+          "description": "List a channel's videos (paginated). `tab` selects the feed: videos (default — the uploads feed, ~100/page), shorts, or streams (live, ~48/page). `sort` (latest/popular/oldest) is OPTIONAL and omitting it is NOT the same as sort=\"latest\": without `sort`, `tab=videos` reads the uploads playlist (~100/page, `playlist_info` populated, Shorts mixed in with long-form uploads, members-only videos excluded); with any `sort` it reads the channel's Videos tab (~30/page, `playlist_info: null`, long-form o",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_playlist_videos",
+          "description": "List videos in a YouTube playlist (paginated, ~100/page). First call: provide playlist (URL or ID starting with PL/UU/LL/FL/OL). Subsequent calls: provide continuation token. Costs 1 credit per page.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_channel_info",
+          "description": "Get a YouTube channel's profile: title, @handle, verified flag, subscriber/video count text, description, keywords, tags, thumbnails, banners, and the tabs the channel has (check these before calling get_channel_sections or list_channel_videos with a `tab`). Accepts @handle, channel URL, or UC... channel ID. Counts are display strings (e.g. `27.8M subscribers`) and null when YouTube hides them — never 0. Not paginated. Costs 1 credit.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_channel_playlists",
+          "description": "List the playlists on a YouTube channel (id, title, URL, video-count text, thumbnails), paginated. First call: provide `channel` (@handle, URL, or UC... ID). Subsequent calls: provide only the `continuation` token from the previous response. Pass a returned playlist id to list_playlist_videos to get its videos. Video-count text is null when YouTube omits it — never 0. Costs 1 credit per page.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "list_channel_posts",
+          "description": "List a YouTube channel's community posts (text, publish time, like-count text, and attachments: image, multi-image, video, playlist, or poll), paginated. First call: provide `channel` (@handle, URL, or UC... ID). Subsequent calls: provide only the `continuation` token from the previous response. Channels without a community tab return an empty results list (not an error). Like counts are null when hidden — never 0. Costs 1 credit per page.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_channel_sections",
+          "description": "Get the curated, grouped sections of a YouTube channel page — titled shelves of videos, playlists, shorts, or featured channels in the channel's own order (the grouped page view, unlike the flat lists from list_channel_videos / list_channel_playlists). Accepts @handle, channel URL, or UC... channel ID. `tab` selects the page: featured (default — the Home page), podcasts, or releases; the latter two exist only on channels that have them (empty results otherwise — call get_channel_info to see a ch",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "get_video_metadata",
+          "description": "Get a YouTube video's metadata without needing captions: title, view/like count text, publish date, structured description + links, uploading-channel summary, and thumbnails. Pass `video_url` (a URL or 11-character ID). Optional `include` adds heavier data: `related` (related videos) and/or `details` (duration, category, tags, caption-track inventory and availability flags; where unavailable, `details.available` is false with a `reason` rather than guessed values). Hidden counts are null, never ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        }
+      ]
+    },
+    {
+      "id": "fmp",
+      "name": "Financial Modeling Prep",
+      "description": "Stock quotes, price history, company financial statements, analyst targets, earnings dates, SEC filings, insider trades",
+      "category": [
+        "finance"
+      ],
+      "mcp_url": "https://fmp.example.com/mcp",
+      "auth": {
+        "header": "Authorization",
+        "format": "Bearer {key}"
+      },
+      "has_key": true,
+      "tools": [
+        {
+          "name": "Fundraisers",
+          "description": "Crowdfunding campaigns and equity offerings from SEC filings. Search by company name or CIK, or browse the latest filings.\n\nEndpoints:\n- crowdfunding-by-cik (cik*): Crowdfunding By CIK\n- crowdfunding-search (name*): Crowdfunding Campaign Search\n- equity-offering-by-cik (cik*): Equity Offering By CIK\n- equity-offering-search (name*): Equity Offering Search\n- latest-crowdfunding: Latest Crowdfunding Campaigns\n- latest-equity-offering: Equity Offering Updates\nParameters marked * are required for th",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "analyst",
+          "description": "Analyst ratings, price targets, and financial estimates. Get current and historical stock grades, consensus price targets, and EPS/revenue estimates by symbol.\n\nEndpoints:\n- financial-estimates (symbol*, period*): Financial Estimates\n- grades (symbol*): Stock Grades\n- grades-summary (symbol*): Stock Grades Summary\n- historical-grades (symbol*): Historical Stock Grades\n- historical-ratings (symbol*): Historical Ratings\n- price-target-consensus (symbol*): Price Target Consensus\n- price-target-summ",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "calendar",
+          "description": "Market event calendars: earnings, dividends, IPOs, and stock splits. Browse upcoming events by date range or look up a specific company's history.\n\nEndpoints:\n- dividends-calendar: Dividends Calendar\n- dividends-company (symbol*): Dividends Company\n- earnings-calendar: Earnings Calendar\n- earnings-company (symbol*): Earnings Report\n- splits-calendar: Stock Splits Calendar\n- splits-company (symbol*): Stock Split Details\nParameters marked * are required for that endpoint.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "chart",
+          "description": "Historical and intraday stock price charts. Get EOD prices (full, light, dividend-adjusted, or unadjusted) and intraday bars at 1min, 5min, 15min, 30min, 1hr, and 4hr intervals.\n\nEndpoints:\n- historical-price-eod-dividend-adjusted (symbol*): Dividend Adjusted Price Chart\n- historical-price-eod-full (symbol*): Stock Price and Volume Data\n- historical-price-eod-light (symbol*): Stock Chart Light\n- historical-price-eod-non-split-adjusted (symbol*): Unadjusted Stock Price\nParameters marked * are req",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "commodity",
+          "description": "Commodity market data: quotes, historical EOD prices, and intraday charts (1min, 5min, 1hr). List available commodity symbols or get real-time/batch quotes.\n\nEndpoints:\n- commodities-historical-price-eod-full (symbol*): Full Chart\n- commodities-historical-price-eod-light (symbol*): Light Chart\n- commodities-list: Commodities List\n- commodities-quote (symbol*): Commodities Quote\n- commodities-quote-short (symbol*): Commodities Quote Short\nParameters marked * are required for that endpoint.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "company",
+          "description": "Company fundamentals and corporate data: profiles, executives, employee counts, market cap, shares float, M&A activity, peer comparisons, and executive compensation. Look up by symbol or CIK.\n\nEndpoints:\n- all-shares-float: All Shares Float\n- batch-market-cap (symbols*): Batch Market Cap\n- company-executives (symbol*): Company Executives\n- company-notes (symbol*): Company Notes\n- delisted-companies: Delisted Companies\n- employee-count (symbol*): Company Employee Count\n- executive-compensation (s",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "crypto",
+          "description": "Cryptocurrency market data: quotes, historical EOD prices, and intraday charts (1min, 5min, 1hr). List available crypto symbols or get real-time/batch quotes.\n\nEndpoints:\n- cryptocurrency-historical-price-eod-full (symbol*): Historical Cryptocurrency Full Chart\n- cryptocurrency-historical-price-eod-light (symbol*): Historical Cryptocurrency Light Chart\n- cryptocurrency-list: Cryptocurrency List\n- cryptocurrency-quote (symbol*): Full Cryptocurrency Quote\n- cryptocurrency-quote-short (symbol*): Cr",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "discountedCashFlow",
+          "description": "Discounted cash flow (DCF) valuations: standard and levered models, plus custom DCF with configurable assumptions (growth rate, tax rate, WACC components, etc.).\n\nEndpoints:\n- custom-dcf-advanced (symbol*): Custom DCF Advanced\n- custom-dcf-levered (symbol*): Custom DCF Levered\n- dcf-advanced (symbol*): DCF Valuation\n- dcf-levered (symbol*): Levered DCF\nParameters marked * are required for that endpoint.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "economics",
+          "description": "Macroeconomic data: economic event calendars, named indicators (GDP, CPI, etc.) with date ranges, treasury rates, and market risk premiums by country.\n\nEndpoints:\n- economics-indicators (name*): Economics Indicators\n- market-risk-premium: Market Risk Premium\n- treasury-rates: Treasury Rates\nParameters marked * are required for that endpoint.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "forex",
+          "description": "Forex market data: currency pair quotes, historical EOD prices, and intraday charts (1min, 5min, 1hr). List available forex pairs or get real-time/batch quotes.\n\nEndpoints:\n- forex-historical-price-eod-full (symbol*): Historical Forex Full Chart\n- forex-historical-price-eod-light (symbol*): Historical Forex Light Chart\n- forex-list: Forex Currency Pairs\n- forex-quote (symbol*): Forex Quote\n- forex-quote-short (symbol*): Forex Short Quote\nParameters marked * are required for that endpoint.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "indexes",
+          "description": "Stock market indexes: current and historical constituents of S&P 500, Nasdaq, and Dow Jones. Quotes, EOD history, and intraday charts for any index symbol.\n\nEndpoints:\n- index-historical-price-eod-full (symbol*): Historical Index Full Chart\n- index-historical-price-eod-light (symbol*): Historical Index Light Chart\n- index-quote (symbol*): Index Quote\n- index-quote-short (symbol*): Index Short Quote\n- indexes-list: Stock Market Indexes List\nParameters marked * are required for that endpoint.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "insiderTrades",
+          "description": "Insider trading data: latest insider transactions, search by symbol/CIK/transaction type, insider trade statistics, acquisition ownership changes, and transaction type reference.\n\nEndpoints:\n- all-transaction-types: All Insider Transaction Types\n- latest-insider-trade: Latest Insider Trading",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "marketHours",
+          "description": "Exchange trading hours and holiday schedules. Check current market status for any exchange or list all exchanges at once.\n\nEndpoints:\n- all-exchange-market-hours: All Exchange Market Hours\n- exchange-market-hours (exchange*): Global Exchange Market Hours\n- holidays-by-exchange (exchange*): holidays-by-exchange\nParameters marked * are required for that endpoint.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "marketPerformance",
+          "description": "Market performance and valuation snapshots: biggest gainers/losers, most active stocks, sector and industry P/E ratios, and historical sector/industry performance.\n\nEndpoints:\n- biggest-gainers: Biggest Stock Gainers\n- biggest-losers: Biggest Stock Losers\n- historical-industry-pe (industry*): Historical Industry PE\n- historical-industry-performance (industry*): Historical Industry Performance\n- historical-sector-pe (sector*): Historical Sector PE\n- historical-sector-performance (sector*): Histor",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "news",
+          "description": "Financial news: general market news, stock-specific news (search by symbols), crypto news, forex news, press releases, and FMP articles. Filter by date range with pagination.\n\nEndpoints:\n- fmp-articles: FMP Articles",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "quote",
+          "description": "Real-time stock quotes: single or batch quotes (full and short), aftermarket quotes/trades, and full-market quotes for all stocks on an exchange, ETFs, mutual funds, crypto, commodities, forex, and indexes.\n\nEndpoints:\n- aftermarket-quote (symbol*): Aftermarket Quote\n- aftermarket-trade (symbol*): Aftermarket Trade\n- quote (symbol*): Stock Quote\n- quote-change (symbol*): Stock Price Change\n- quote-short (symbol*): Stock Quote Short\nParameters marked * are required for that endpoint.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "search",
+          "description": "Search and screen stocks: search by symbol, company name, CIK, ISIN, or CUSIP. Use the stock screener to filter by market cap, price, beta, dividend, volume, sector, industry, country, and more.\n\nEndpoints:\n- search-CIK (cik*): Search Cik\n- search-name (query*): Company Name Search\n- search-symbol (query*): Stock Symbol Search\nParameters marked * are required for that endpoint.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "secFilings",
+          "description": "SEC filings: latest 8-K and financial filings, search filings by symbol/CIK/form type/company name, full SEC company profiles, and SIC industry classification data.\n\nEndpoints:\n- 8k-latest (from_date*, to_date*): Latest 8-K SEC Filings\n- company-search-by-cik (cik*): SEC Filings Company Search By CIK\n- company-search-by-symbol (symbol*): SEC Filings Company Search By Symbol\n- financials-latest (from_date*, to_date*): Latest SEC Filings\n- industry-classification-list: Industry Classification List",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "senate",
+          "description": "U.S. congressional trading disclosures: latest Senate and House financial disclosures, search trades by stock symbol or politician name.\n\nEndpoints:\n- house-latest: Latest House Financial Disclosures\n- senate-latest: Latest Senate Financial Disclosures",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        },
+        {
+          "name": "statements",
+          "description": "Financial statements and ratios: income statements, balance sheets, cash flow statements (standard, as-reported, TTM, growth). Key metrics, financial ratios, scores, enterprise values, owner earnings, and revenue segmentation (geographic and product). Use period=\"annual\" or \"quarter\"; some endpoints also accept \"FY\" and \"Q1\"–\"Q4\".\n\nEndpoints:\n- as-reported-balance-statements (symbol*): As Reported Balance Statements\n- as-reported-cashflow-statements (symbol*): As Reported Cashflow Statements\n- a",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": true
+        }
+      ]
+    },
+    {
+      "id": "x",
+      "name": "X",
+      "description": "Posts (tweets) on X (Twitter): search, single posts, replies, profiles, a user's posts; billed per post, so ask for few",
+      "category": [
+        "social"
+      ],
+      "mcp_url": "https://x.example.com/mcp",
+      "auth": {
+        "header": "Authorization",
+        "format": "Bearer {key}"
+      },
+      "has_key": true,
+      "tools": [
+        {
+          "name": "search_posts_all",
+          "description": "Retrieves Posts from the full archive matching a search query.\n\nAt most one of `start_time`, `since_id` may be provided. At most one of `end_time`, `until_id` may be provided. At most one of `pagination_token`, `next_token` may be provided. Each returned post includes a `url` deeplinking to it on x.com.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "get_posts_by_id",
+          "description": "Retrieves details of a specific Post by its ID. Each returned post includes a `url` deeplinking to it on x.com.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "get_users_by_username",
+          "description": "Retrieves details of a specific User by their username.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        },
+        {
+          "name": "get_users_posts",
+          "description": "Retrieves a list of Posts authored by a specific User by their ID.\n\nWhen both are provided, `start_time` must be earlier than `end_time`. When both are provided, `since_id` must be less than `until_id`. Each returned post includes a `url` deeplinking to it on x.com.",
+          "input_schema": {
+            "type": "object"
+          },
+          "read_only": false
+        }
+      ]
+    }
+  ]
+}

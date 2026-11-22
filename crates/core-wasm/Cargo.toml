@@ -1,0 +1,14 @@
+[package]
+name = "gator-core-wasm"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+gator-core = { path = "../core" }
+serde_json.workspace = true
+wasm-bindgen = "=0.2.130"

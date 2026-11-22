@@ -1,0 +1,21 @@
+id = "x"
+name = "X"
+description = "Posts (tweets) on X (Twitter): search, single posts, replies, profiles, a user's posts; billed per post, so ask for few"
+category = ["social"]
+# With read_only=true the server lists only its reading tools, so a writing tool cannot be switched on.
+mcp_url = "https://api.x.com/mcp?read_only=true"
+signup_url = "https://console.x.com"
+docs_url = "https://docs.x.com/tools/mcp"
+read_only = false
+# Public content only. The other tools read the signed-in account (chats, bookmarks, broadcasts) or cost more.
+default_enabled_tools = [
+  "search_posts_all",
+  "get_posts_by_id",
+  "get_users_by_username",
+  "get_users_posts",
+]
+key_hint = "An app-only Bearer token from the X developer console."
+
+[auth]
+header = "Authorization"
+format = "Bearer {key}"

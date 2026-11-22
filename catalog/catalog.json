@@ -1,0 +1,211 @@
+[
+  {
+    "auth": {
+      "format": "Bearer {key}",
+      "header": "Authorization"
+    },
+    "category": [
+      "web"
+    ],
+    "default_enabled_tools": [
+      "firecrawl_search",
+      "firecrawl_scrape"
+    ],
+    "description": "Web search and the text of any web page or PDF",
+    "docs_url": "https://docs.firecrawl.dev/mcp-server",
+    "id": "firecrawl",
+    "key_hint": "Optional: without a key, search and scrape still work.",
+    "key_required": false,
+    "mcp_url": "https://mcp.firecrawl.dev/v2/mcp",
+    "name": "Firecrawl",
+    "read_only": false,
+    "signup_url": "https://www.firecrawl.dev/app/api-keys"
+  },
+  {
+    "auth": {
+      "format": "{key}",
+      "header": "X-API-Key"
+    },
+    "category": [
+      "finance"
+    ],
+    "default_enabled_tools": [
+      "quote",
+      "statements",
+      "chart",
+      "company",
+      "analyst",
+      "calendar",
+      "discountedCashFlow",
+      "secFilings",
+      "insiderTrades",
+      "senate",
+      "Fundraisers",
+      "marketPerformance",
+      "marketHours",
+      "indexes",
+      "commodity",
+      "crypto",
+      "forex",
+      "economics",
+      "news",
+      "search"
+    ],
+    "description": "Stock quotes, price history, company financial statements, analyst targets, earnings dates, SEC filings, insider trades",
+    "docs_url": "https://site.financialmodelingprep.com/developer/docs/mcp-server",
+    "id": "fmp",
+    "key_hint": "A wrong key still connects; its calls then fail.",
+    "mcp_url": "https://financialmodelingprep.com/mcp",
+    "name": "Financial Modeling Prep",
+    "read_only": true,
+    "signup_url": "https://site.financialmodelingprep.com/developer/docs/dashboard"
+  },
+  {
+    "auth": {
+      "format": "Bearer {key}",
+      "header": "Authorization"
+    },
+    "category": [
+      "code"
+    ],
+    "default_disabled_tools": [
+      "ui_get",
+      "run_secret_scanning"
+    ],
+    "description": "GitHub repositories: files, commits, issues, pull requests, releases, code and repository search",
+    "docs_url": "https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md",
+    "id": "github",
+    "key_hint": "A fine-grained personal access token with read-only permissions, for public repositories only unless you need more.",
+    "mcp_url": "https://api.githubcopilot.com/mcp/readonly",
+    "name": "GitHub",
+    "read_only": true,
+    "signup_url": "https://github.com/settings/personal-access-tokens/new"
+  },
+  {
+    "auth": {
+      "format": "Bearer {key}",
+      "header": "Authorization"
+    },
+    "category": [
+      "social"
+    ],
+    "default_enabled_tools": [
+      "reddit_preview",
+      "subreddit_preview",
+      "search_reddit",
+      "latest_posts",
+      "latest_comments",
+      "get_thread",
+      "user_history",
+      "list_streams",
+      "stream_items"
+    ],
+    "description": "Reddit posts and comments: search, a subreddit's latest posts, threads, user history, mention counts",
+    "docs_url": "https://redlisten.com/docs",
+    "id": "redlisten",
+    "key_hint": "Optional: without a key only the two preview tools work.",
+    "key_required": false,
+    "mcp_url": "https://api.redlisten.com/mcp",
+    "name": "Redlisten",
+    "read_only": false,
+    "signup_url": "https://app.redlisten.com/?signup=1"
+  },
+  {
+    "auth": {
+      "format": "Bearer {key}",
+      "header": "Authorization"
+    },
+    "category": [
+      "search",
+      "news"
+    ],
+    "default_enabled_tools": [
+      "tavily_search",
+      "tavily_extract"
+    ],
+    "description": "Web search, recent news and the text of any web page",
+    "docs_url": "https://docs.tavily.com/documentation/mcp",
+    "id": "tavily",
+    "mcp_url": "https://mcp.tavily.com/mcp",
+    "name": "Tavily",
+    "quota_signals": [
+      "exceeds your plan's set usage limit",
+      "exceeds the pay-as-you-go limit"
+    ],
+    "read_only": false,
+    "signup_url": "https://app.tavily.com"
+  },
+  {
+    "auth": {
+      "format": "Bearer {key}",
+      "header": "Authorization"
+    },
+    "category": [
+      "video"
+    ],
+    "description": "YouTube video transcripts and search: video details, a channel's videos and playlists",
+    "docs_url": "https://transcriptapi.com/docs/mcp",
+    "id": "transcriptapi",
+    "key_hint": "Verify your email first.",
+    "mcp_url": "https://transcriptapi.com/mcp",
+    "name": "TranscriptAPI",
+    "quota_signals": [
+      "Payment required. You have no credits remaining."
+    ],
+    "read_only": true,
+    "signup_url": "https://transcriptapi.com/dashboard/api-keys"
+  },
+  {
+    "auth": {
+      "format": "Bearer {key}",
+      "header": "Authorization"
+    },
+    "category": [
+      "social"
+    ],
+    "default_enabled_tools": [
+      "search_posts_all",
+      "get_posts_by_id",
+      "get_users_by_username",
+      "get_users_posts"
+    ],
+    "description": "Posts (tweets) on X (Twitter): search, single posts, replies, profiles, a user's posts; billed per post, so ask for few",
+    "docs_url": "https://docs.x.com/tools/mcp",
+    "id": "x",
+    "key_hint": "An app-only Bearer token from the X developer console.",
+    "mcp_url": "https://api.x.com/mcp?read_only=true",
+    "name": "X",
+    "read_only": false,
+    "signup_url": "https://console.x.com"
+  },
+  {
+    "auth": {
+      "format": "Bearer {key}",
+      "header": "Authorization"
+    },
+    "category": [
+      "shopping"
+    ],
+    "default_enabled_tools": [
+      "openapi_v2_products_search",
+      "openapi_v2_products_detail",
+      "openapi_v3_realtime_product",
+      "openapi_v2_products_history",
+      "openapi_v2_products_sales_trend",
+      "openapi_v2_reviews_search",
+      "openapi_v2_realtime_reviews",
+      "openapi_v2_voc_analysis",
+      "openapi_v2_realtime_bestsellers",
+      "openapi_v2_products_leaderboard",
+      "openapi_v2_competitors",
+      "openapi_v2_categories"
+    ],
+    "description": "Amazon products and reviews: search, details, live prices, price and sales history, best sellers",
+    "docs_url": "https://zoodata.ai/docs",
+    "id": "zoodata",
+    "mcp_url": "https://api.zoodata.ai/mcp",
+    "name": "ZooData",
+    "read_only": false,
+    "signup_url": "https://zoodata.ai/api-keys"
+  }
+]

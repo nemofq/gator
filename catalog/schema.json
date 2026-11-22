@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gator provider manifest",
+  "description": "One remote MCP server that takes a static API key in a request header, or no key at all.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "description", "mcp_url"],
+  "properties": {
+    "id": {
+      "description": "Unique ID and file name. Prefixes every tool ID.",
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "name": {
+      "description": "Display name.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "description": {
+      "description": "The sites and kinds of data it covers, in the words a person would use to ask for them. Agents read this to decide when to use Gator.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "category": {
+      "description": "Lowercase tags, searched alongside tool names.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+$", "minLength": 1, "maxLength": 24 }
+    },
+    "mcp_url": {
+      "description": "The Streamable HTTP MCP endpoint meant for API-key access.",
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "signup_url": {
+      "description": "The page where a new person gets an API key: the developer console or API-keys page, or the home page only if signing up there is the way to a key.",
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "docs_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "read_only": {
+      "description": "True only if no tool can write, post, delete or start a paid long-running job. If false, default_enabled_tools must list the tools to switch on.",
+      "type": "boolean"
+    },
+    "key_required": {
+      "description": "False if the server works without a key.",
+      "type": "boolean",
+      "default": true
+    },
+    "default_enabled_tools": {
+      "description": "Tools switched on when the provider is enabled. Empty means all.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "default_disabled_tools": {
+      "description": "Tools left off when the provider is enabled.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "key_hint": {
+      "description": "One short sentence shown next to the key field, only what helps the owner get a working key: what works without one, what access to grant. No plan, pricing, quota or credit details: they change and are not ours to maintain. Never the key's format or prefix.",
+      "type": "string",
+      "maxLength": 200
+    },
+    "quota_signals": {
+      "description": "Text the provider puts in a short result when the key's quota is used up, for providers that do not answer with HTTP 429 or 402. Each must be specific enough that an ordinary result cannot contain it.",
+      "type": "array",
+      "maxItems": 5,
+      "items": { "type": "string", "minLength": 16, "maxLength": 200 }
+    },
+    "auth": {
+      "description": "The request header that carries the key.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["header", "format"],
+      "properties": {
+        "header": { "type": "string", "minLength": 1 },
+        "format": {
+          "description": "The header value, with {key} where the key goes.",
+          "type": "string",
+          "pattern": "\\{key\\}"
+        }
+      }
+    }
+  }
+}

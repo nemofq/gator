@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# Pull requests cancel superseded runs. Runs on main queue instead, so that only one at a time can
+# commit a build; a queued run builds whatever main is when it starts.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Written only by scripts/build-core.sh; the same list is in that script.
+env:
+  GENERATED: |-
+    crates/core-wasm/pkg/gator_core.js
+    crates/core-wasm/pkg/gator_core.d.ts
+    crates/core-wasm/pkg/gator_core_bg.wasm
+    crates/core-wasm/pkg/gator_core_bg.wasm.d.ts
+    crates/core-wasm/pkg/sources.sha256
+    catalog/catalog.json
+
+jobs:
+  generated-files:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: The pull request leaves the generated files alone
+        # HEAD is the pull request merged into its base, HEAD^1 that base.
+        run: |
+          touched=$(git diff --no-renames --name-only HEAD^1 HEAD | grep -xF "$GENERATED" || true)
+          if [ -n "$touched" ]; then
+            echo "::error::Remove these generated files from the pull request; CI builds them after the merge: $(echo $touched)"
+            exit 1
+          fi
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - &toolchain
+        name: Install the pinned toolchain (rust-toolchain.toml)
+        run: rustup toolchain install
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace
+
+  javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - *toolchain
+      - &wasm-bindgen-version
+        name: Read the wasm-bindgen version from scripts/build-core.sh
+        id: wasm-bindgen
+        run: echo "version=$(sed -n 's/^WASM_BINDGEN_VERSION=//p' scripts/build-core.sh)" >> "$GITHUB_OUTPUT"
+      - &wasm-bindgen-cache
+        id: wasm-bindgen-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: wasm-bindgen-${{ runner.os }}-${{ steps.wasm-bindgen.outputs.version }}
+      - &wasm-bindgen-install
+        name: Install wasm-bindgen-cli
+        if: steps.wasm-bindgen-cache.outputs.cache-hit != 'true'
+        env:
+          VERSION: ${{ steps.wasm-bindgen.outputs.version }}
+        run: cargo install wasm-bindgen-cli --version "$VERSION" --locked
+      - &build
+        name: Build the generated files from these sources
+        run: scripts/build-core.sh
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run check
+      - run: pnpm run test
+      - run: pnpm run build
+      - run: pnpm --filter @gator/dashboard run contrast
+      - name: Worker bundles (wrangler deploy --dry-run)
+        run: pnpm exec wrangler deploy --dry-run --outdir dist-dry-run
+
+  # Makes the committed generated files on main CI's Linux build of main's sources. A push made
+  # with this token starts no new run, so the job checks its own push. It succeeds either way and
+  # says in its summary whether it committed.
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+      - *toolchain
+      - *wasm-bindgen-version
+      - *wasm-bindgen-cache
+      - *wasm-bindgen-install
+      - *build
+      - name: Commit the build if it differs from what main holds
+        env:
+          TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "The committed generated files are byte for byte this build." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          stray=$(git diff --cached --name-only | grep -vxF "$GENERATED" || true)
+          if [ -n "$stray" ]; then
+            echo "::error::The build changed files that are not generated files: $(echo $stray)"
+            exit 1
+          fi
+          git -c user.name='github-actions[bot]' \
+            -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -q -m "Rebuild the generated files on Linux"
+          git push -q "https://x-access-token:$TOKEN@github.com/$REPOSITORY.git" HEAD:refs/heads/main
+          remote=$(git ls-remote "https://x-access-token:$TOKEN@github.com/$REPOSITORY.git" refs/heads/main | cut -f1)
+          if [ "$remote" != "$(git rev-parse HEAD)" ] || [ -n "$(git status --porcelain)" ]; then
+            echo "::error::main does not hold this build after the push."
+            exit 1
+          fi
+          echo "Rebuilt: committed $(git rev-parse --short HEAD) with this build of $(git diff --name-only HEAD^1 HEAD | xargs)." >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,10 @@
+.env*
+.dev.vars
+notes/
+node_modules/
+target/
+dist/
+.wrangler/
+.mcp.json
+.DS_Store
+.claude/

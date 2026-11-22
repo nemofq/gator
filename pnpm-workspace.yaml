@@ -1,0 +1,8 @@
+packages:
+  - apps/*
+  - crates/core-wasm/pkg
+
+# Dependency install scripts are off except for these, which download their native binary.
+allowBuilds:
+  esbuild: true
+  workerd: true

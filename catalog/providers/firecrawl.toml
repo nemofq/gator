@@ -1,0 +1,15 @@
+id = "firecrawl"
+name = "Firecrawl"
+description = "Web search and the text of any web page or PDF"
+category = ["web"]
+mcp_url = "https://mcp.firecrawl.dev/v2/mcp"
+signup_url = "https://www.firecrawl.dev/app/api-keys"
+docs_url = "https://docs.firecrawl.dev/mcp-server"
+read_only = false
+key_required = false
+default_enabled_tools = ["firecrawl_search", "firecrawl_scrape"]
+key_hint = "Optional: without a key, search and scrape still work."
+
+[auth]
+header = "Authorization"
+format = "Bearer {key}"

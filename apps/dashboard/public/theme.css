@@ -1,0 +1,116 @@
+/* Each theme is three base colours; every other colour is mixed from them here.
+   scripts/contrast.mjs reads this file and checks the pairs the interface uses. */
+
+:root {
+  color-scheme: light;
+  --navy: #13203d;
+  --teal: #0d7566;
+  --pink: #c42a62;
+
+  --bg: color-mix(in srgb, var(--teal) 5%, white);
+  --surface: white;
+  --surface-2: color-mix(in srgb, var(--navy) 5%, white);
+  --line: color-mix(in srgb, var(--navy) 14%, white);
+  --line-strong: color-mix(in srgb, var(--navy) 55%, white);
+  --text: var(--navy);
+  --text-2: color-mix(in srgb, var(--navy) 72%, white);
+  --link: color-mix(in srgb, var(--teal) 80%, var(--navy));
+  --ok: color-mix(in srgb, var(--teal) 85%, var(--navy));
+  --danger: color-mix(in srgb, var(--pink) 75%, var(--navy));
+  --accent: var(--pink);
+  --accent-hover: color-mix(in srgb, var(--pink) 85%, var(--navy));
+  --on-accent: white;
+  --banner: color-mix(in srgb, var(--pink) 9%, white);
+  --chart-1: var(--teal);
+  --chart-2: var(--pink);
+  --tile: color-mix(in srgb, var(--navy) 9%, white);
+
+  /* One display, body and mono trio per platform; each name is present on only one platform, so the
+     order picks the trio (notes/handback/ui2-fonts.md). Apple: Futura, Avenir Next, SF Mono or Menlo.
+     Windows: Century Gothic (with Office) or Segoe UI capitals, Segoe UI, Cascadia Mono or Consolas.
+     Linux: URW Gothic (urw-base35, with Ghostscript); body Adwaita Sans or Inter where present, else
+     Nimbus Sans (the same URW set), else the desktop's own font; mono Adwaita Mono, Hack, DejaVu or
+     Noto Sans Mono. Android, ChromeOS: Roboto, in capitals for display. Never a serif-footed mono
+     (Courier, Liberation Mono) and never the bare `monospace` before real ones: it is Courier in
+     Chrome on macOS. */
+  --font-body:
+    "Avenir Next", "Segoe UI Variable Text", "Segoe UI", "Adwaita Sans", "Inter Variable", Inter,
+    "Nimbus Sans", "Nimbus Sans L", Roboto, system-ui, sans-serif;
+  --font-display:
+    Futura, "Futura PT", "Century Gothic", "URW Gothic", "URW Gothic L", var(--font-body);
+  --font-mono:
+    ui-monospace, "SF Mono", Menlo, "Cascadia Mono", Consolas, "Adwaita Mono", Hack,
+    "DejaVu Sans Mono", "Noto Sans Mono", "Roboto Mono", "Droid Sans Mono", monospace;
+  /* Corners: controls (buttons, fields, switches, Copy), cards and panels, and the small chips,
+     badges and tags inside them. */
+  --radius-control: 6px;
+  --radius-card: 8px;
+  --radius-chip: 4px;
+}
+
+/* Designed for night use: a navy canvas, near-white text, pink and teal kept bright but sparse. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --navy: #0b1324;
+  --teal: #3cc8a8;
+  --pink: #ff7aa6;
+
+  --bg: var(--navy);
+  --surface: color-mix(in srgb, white 4%, var(--navy));
+  --surface-2: color-mix(in srgb, white 8%, var(--navy));
+  --line: color-mix(in srgb, white 13%, var(--navy));
+  --line-strong: color-mix(in srgb, white 42%, var(--navy));
+  --text: color-mix(in srgb, var(--navy) 9%, white);
+  --text-2: color-mix(in srgb, var(--navy) 35%, white);
+  --link: var(--teal);
+  --ok: var(--teal);
+  --danger: var(--pink);
+  --accent-hover: color-mix(in srgb, var(--pink) 86%, var(--navy));
+  --on-accent: var(--navy);
+  --banner: color-mix(in srgb, var(--pink) 14%, var(--navy));
+  --tile: color-mix(in srgb, white 13%, var(--navy));
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  font: 15px / 1.5 var(--font-body);
+  /* Every body and mono fallback gets the same x-height, 0.52 of the size (Segoe UI, SF and Noto
+     Sans are 0.50–0.54; Avenir Next is 0.47 and grows to match). It is inherited; a `font`
+     shorthand resets it, and app.css matches display capitals by cap height instead. */
+  font-size-adjust: 0.52;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: var(--link);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* On a text field the ring takes the place of its border instead of circling it a second time. */
+input:not([type="checkbox"]):focus-visible {
+  outline-offset: -1px;
+}
+
+code,
+pre,
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  font-weight: 400;
+}
+
+.display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}

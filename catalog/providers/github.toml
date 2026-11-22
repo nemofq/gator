@@ -1,0 +1,15 @@
+id = "github"
+name = "GitHub"
+description = "GitHub repositories: files, commits, issues, pull requests, releases, code and repository search"
+category = ["code"]
+mcp_url = "https://api.githubcopilot.com/mcp/readonly"
+signup_url = "https://github.com/settings/personal-access-tokens/new"
+docs_url = "https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md"
+read_only = true
+# ui_get serves MCP Apps widgets; run_secret_scanning uploads the text it is given.
+default_disabled_tools = ["ui_get", "run_secret_scanning"]
+key_hint = "A fine-grained personal access token with read-only permissions, for public repositories only unless you need more."
+
+[auth]
+header = "Authorization"
+format = "Bearer {key}"

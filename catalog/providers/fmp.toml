@@ -1,0 +1,36 @@
+id = "fmp"
+name = "Financial Modeling Prep"
+description = "Stock quotes, price history, company financial statements, analyst targets, earnings dates, SEC filings, insider trades"
+category = ["finance"]
+mcp_url = "https://financialmodelingprep.com/mcp"
+signup_url = "https://site.financialmodelingprep.com/developer/docs/dashboard"
+docs_url = "https://site.financialmodelingprep.com/developer/docs/mcp-server"
+read_only = true
+# The tools a free key lists, all of which answered on it (2026-11-21); tools only a paid plan lists start disabled.
+default_enabled_tools = [
+  "quote",
+  "statements",
+  "chart",
+  "company",
+  "analyst",
+  "calendar",
+  "discountedCashFlow",
+  "secFilings",
+  "insiderTrades",
+  "senate",
+  "Fundraisers",
+  "marketPerformance",
+  "marketHours",
+  "indexes",
+  "commodity",
+  "crypto",
+  "forex",
+  "economics",
+  "news",
+  "search",
+]
+key_hint = "A wrong key still connects; its calls then fail."
+
+[auth]
+header = "X-API-Key"
+format = "{key}"

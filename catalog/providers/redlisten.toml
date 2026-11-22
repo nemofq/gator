@@ -1,0 +1,16 @@
+id = "redlisten"
+name = "Redlisten"
+description = "Reddit posts and comments: search, a subreddit's latest posts, threads, user history, mention counts"
+category = ["social"]
+mcp_url = "https://api.redlisten.com/mcp"
+signup_url = "https://app.redlisten.com/?signup=1"
+docs_url = "https://redlisten.com/docs"
+read_only = false
+key_required = false
+# create_stream writes; keyword_trends, compare_keywords and top_communities need a paid plan.
+default_enabled_tools = ["reddit_preview", "subreddit_preview", "search_reddit", "latest_posts", "latest_comments", "get_thread", "user_history", "list_streams", "stream_items"]
+key_hint = "Optional: without a key only the two preview tools work."
+
+[auth]
+header = "Authorization"
+format = "Bearer {key}"

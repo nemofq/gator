@@ -1,0 +1,1552 @@
+/* The dashboard shell. Colours come only from the tokens in /theme.css. */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  left: 8px;
+  top: -40px;
+  padding: 6px 10px;
+  background: var(--surface);
+}
+
+.skip:focus {
+  top: 8px;
+}
+
+/* Type: three voices. Display capitals for headings and controls; the body face for text, names and
+   every number (tabular where numbers line up); mono, at regular weight, only for identifiers. */
+
+.top nav a,
+button,
+a.button,
+label,
+th {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  font-size: 0.72rem;
+  font-size-adjust: cap-height 0.76;
+}
+
+/* Display capitals keep Futura's cap height (0.76 of the size) in whichever display face renders,
+   instead of the body's x-height adjustment. It is inherited, so a count inside a display heading
+   gets figures exactly as tall as the heading's capitals. */
+.display {
+  font-size-adjust: cap-height 0.76;
+}
+
+/* Labels in a box are centred on their capitals, not on a line box that includes descender space:
+   the line is trimmed to cap height and baseline (text-box) and centred (align-content). The cap
+   height is a whole 8 px in every font, so an even gap above and below has nothing to round.
+   Without text-box (Firefox), the line box is centred instead. */
+button,
+a.button,
+.top nav span {
+  font-size: calc(8px / 0.76);
+  text-box: trim-both cap alphabetic;
+  align-content: center;
+}
+
+.name {
+  font-weight: 600;
+}
+
+/* A quiet qualifier after a name: where and when an agent connected, or that it is revoked. */
+.qual {
+  display: inline-block;
+  color: var(--text-2);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+/* Icons: a 10-unit drawing, one cap height square, standing on the baseline, so it centres on the
+   capitals of its label in any font. Before a label by default; after it in a control. */
+.icon {
+  flex: none;
+  width: 1cap;
+  height: 1cap;
+  margin-right: 0.45em;
+  fill: currentColor;
+}
+
+.icon .line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+button .icon {
+  margin: 0 0 0 0.6em;
+}
+
+/* A figure and its words (ui.tsx Stat): the figure in the body face, tabular and strong; the words
+   quiet. In a display heading it inherits the heading's cap height and weight. */
+.stat {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-2);
+}
+
+.stat strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+h2 .stat,
+h3 .stat {
+  margin-left: 0.5em;
+}
+
+/* Controls */
+
+button,
+a.button {
+  display: inline-block;
+  box-sizing: border-box;
+  min-height: 32px;
+  padding: 0 12px;
+  text-align: center;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+button:disabled,
+.switch:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+button.primary {
+  color: var(--on-accent);
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Hover darkens the fill and leaves the border alone: a border that turns dark on hover blends,
+   in its anti-aliased corners, with a fill of another colour, and the corners look blurred. */
+button:hover:enabled,
+a.button:hover {
+  background-color: color-mix(in srgb, var(--text) 8%, var(--surface-2));
+}
+
+button.primary:hover:enabled {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+button.danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* Holds "Copied" without changing width. */
+.copy {
+  min-width: calc(5.6em + 24px);
+}
+
+/* Show more or less: quiet text with a chevron, no box. */
+.disclose {
+  min-height: 0;
+  padding: 0 2px;
+  font: inherit;
+  font-size: 0.85rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-2);
+  background: none;
+  border: 0;
+}
+
+button.disclose:hover:enabled {
+  color: var(--text);
+  background: none;
+  text-decoration: underline;
+}
+
+label {
+  display: block;
+  margin: 14px 0 6px;
+}
+
+input:not([type="checkbox"]) {
+  width: 100%;
+  max-width: 520px;
+  box-sizing: border-box;
+  min-height: 32px;
+  padding: 4px 10px;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+}
+
+input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+input[type="password"] {
+  font-family: var(--font-mono);
+}
+
+input::placeholder {
+  font-family: var(--font-body);
+}
+
+input[type="number"] {
+  max-width: 240px;
+}
+
+.problem,
+.alert {
+  margin: 6px 0;
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
+.alert {
+  padding: 6px 10px;
+  border-left: 3px solid var(--danger);
+  background: var(--surface-2);
+}
+
+.field {
+  margin-bottom: 4px;
+}
+
+.row > label {
+  margin: 0;
+}
+
+.field:first-child > label {
+  margin-top: 0;
+}
+
+.switch {
+  appearance: none;
+  flex: none;
+  position: relative;
+  width: 36px;
+  height: 20px;
+  margin: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.switch::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  transition: transform 0.12s;
+}
+
+/* A larger target than the drawing, for fingers. */
+.switch::after {
+  content: "";
+  position: absolute;
+  inset: -11px -6px;
+}
+
+.switch:checked {
+  background: var(--ok);
+  border-color: var(--ok);
+}
+
+.switch:checked::before {
+  transform: translateX(16px);
+  background: var(--surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch::before {
+    transition: none;
+  }
+}
+
+/* A state (ui.tsx Tag) is boxed, with an icon; a category is a quiet filled label without one. Both
+   are trimmed to cap height and baseline with even padding, so the label and the icon share the
+   box's centre in any font. */
+/* A tag sits on the baseline of the text beside it, so it is centred on that text's capitals only
+   when both are one size: tags are set in the size of hints, card footers and counts. The negative
+   margin keeps the room it takes to that of the text beside it, so no line or row grows to fit it. */
+.tag,
+.badge {
+  display: inline-block;
+  padding: 5px 6px;
+  margin-block: -1px;
+  border-radius: var(--radius-chip);
+  font-size: 0.85rem;
+  line-height: 1;
+  text-box: trim-both cap alphabetic;
+  white-space: nowrap;
+}
+
+.tag {
+  border: 1px solid currentColor;
+}
+
+.badge {
+  color: var(--text-2);
+  background: var(--surface-2);
+  font-size: 0.75rem;
+}
+
+.tag.ok {
+  color: var(--ok);
+}
+
+.tag.off {
+  color: var(--text-2);
+}
+
+.tag.error,
+.tag.write {
+  color: var(--danger);
+}
+
+.tag.changed {
+  color: var(--accent);
+}
+
+/* A long message inside a tag wraps rather than widening the page. */
+.row .tag {
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+}
+
+/* A step in a path through someone else's menus; it breaks only between steps. */
+.step {
+  white-space: nowrap;
+}
+
+.step .icon {
+  margin: 0 0.45em;
+  color: var(--text-2);
+}
+
+.copyline {
+  display: flex;
+  gap: 8px;
+}
+
+.copyline code {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  background: var(--surface-2);
+  border-radius: var(--radius-control);
+  overflow-wrap: anywhere;
+}
+
+/* A short note shown on hover or focus (and read by screen readers always). */
+.tip {
+  position: absolute;
+  z-index: 2;
+  padding: 5px 8px;
+  color: var(--surface);
+  background: var(--text);
+  border-radius: var(--radius-control);
+  font-size: 0.8rem;
+  font-weight: 400;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Header: one bar at every width. As it narrows (see the breakpoints at the end), Sign out leaves
+   (Settings has it), the theme control becomes one button, the brand keeps only its mark, and the
+   nav tightens. */
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-height: 52px;
+  padding: 0 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+/* The lockup's box is its capitals (authorize.css), so centring it centres the wordmark on the nav
+   labels; the padding keeps the focus ring clear of the mark, which reaches a quarter cap beyond. */
+.top .brand {
+  font-size: 1.05rem;
+  padding: calc(0.25cap + 6px) 8px;
+  margin: 0 -8px;
+}
+
+.top nav {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+}
+
+.top nav a {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  color: var(--text-2);
+  text-decoration: none;
+}
+
+.top nav span {
+  box-sizing: border-box;
+  min-height: 26px;
+  padding: 5px 10px;
+  border-radius: var(--radius-control);
+}
+
+.top nav a[aria-current="page"] span {
+  color: var(--on-accent);
+  background: var(--accent);
+}
+
+/* The bar's buttons are bare text and icons. */
+.top button {
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+}
+
+.top nav a:hover,
+.top button:hover:enabled {
+  color: var(--text);
+  background: none;
+}
+
+/* Segmented control: the chosen segment is inset inside the frame, never touching it. Frame and
+   segment corners are concentric: a control's radius less the 2 px of border and padding. */
+.segmented {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 1px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+}
+
+.segmented button {
+  min-height: 24px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-chip);
+  background: none;
+  color: var(--text-2);
+}
+
+/* Inside the frame, so the ring does not collide with it. */
+.segmented button:focus-visible {
+  outline-offset: -2px;
+}
+
+.segmented button:hover:enabled {
+  color: var(--text);
+  background: none;
+}
+
+.segmented [aria-pressed="true"],
+.segmented [aria-pressed="true"]:hover:enabled {
+  color: var(--on-accent);
+  background: var(--text);
+}
+
+/* An icon, centred as a flex item. */
+.theme-step {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  min-height: 40px;
+}
+
+.banner {
+  padding: 10px 16px;
+  background: var(--banner);
+  border-bottom: 1px solid var(--line);
+}
+
+.banner strong {
+  color: var(--danger);
+}
+
+/* Layout */
+
+main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+main:focus {
+  outline: none;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 1.35rem;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 0.78rem;
+  color: var(--text-2);
+}
+
+h3 {
+  margin: 18px 0 6px;
+  font-size: 0.7rem;
+  color: var(--text-2);
+}
+
+/* A page title with its actions on the right. */
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.head h1 {
+  flex: 1;
+  margin: 0;
+}
+
+/* A page title with a quiet note beside it; the note goes under it when it does not fit. */
+.titled {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 14px;
+  margin-bottom: 16px;
+}
+
+/* Each moves by half its cap height less half the title's (0.76 of 1.35rem, .display), so from the
+   shared baseline the note's capitals centre on the title's, and the title stays where it is. */
+.titled > * {
+  margin: 0;
+  translate: 0 calc((1cap - 0.76 * 1.35rem) / 2);
+}
+
+.lead {
+  max-width: 90ch;
+  margin: 0 0 16px;
+  color: var(--text-2);
+}
+
+.prose {
+  max-width: 70ch;
+}
+
+.panel {
+  margin: 0 0 16px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  min-width: 0;
+}
+
+.panel > :first-child {
+  margin-top: 0;
+}
+
+.panel > :last-child {
+  margin-bottom: 0;
+}
+
+.bars,
+.cards,
+.plain-list,
+.tools,
+.changes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.dim,
+.hint {
+  color: var(--text-2);
+}
+
+.hint {
+  margin: 6px 0 10px;
+  font-size: 0.85rem;
+}
+
+.wrap {
+  overflow-wrap: anywhere;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.empty {
+  color: var(--text-2);
+  font-style: italic;
+}
+
+.fatal {
+  max-width: 480px;
+  margin: 20vh auto;
+  padding: 0 16px;
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 32px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--text-2);
+  font-size: 0.85rem;
+}
+
+/* Tables */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+th {
+  text-align: left;
+  vertical-align: bottom;
+  color: var(--text-2);
+  padding: 4px 8px 6px;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+td {
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: baseline;
+}
+
+/* An opened row and the detail beneath it read as one. */
+.opened td {
+  border-bottom: 0;
+}
+
+.said td {
+  padding-top: 0;
+}
+
+th:first-child,
+td:first-child {
+  padding-left: 0;
+}
+
+th:last-child,
+td:last-child {
+  padding-right: 0;
+}
+
+/* Agents: the rest of a row centres on the name and its qualifier as a block. */
+.agents td {
+  vertical-align: middle;
+}
+
+/* A table that ends its panel needs no closing rule. */
+.panel > table:last-child tr:last-child,
+.panel > table:last-child tr:last-child td {
+  border-bottom: 0;
+}
+
+.n {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.end {
+  text-align: right;
+}
+
+/* Overview */
+
+/* Today's figure and the month's at the left, the chart at the right; their bottoms level. */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) 1fr;
+  gap: 16px 32px;
+  align-items: end;
+  padding: 20px 24px;
+}
+
+.hero h2 {
+  margin: 0;
+}
+
+.big {
+  margin: 6px 0 10px;
+  font: 600 3.5rem / 1 var(--font-body);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.today .dim {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.chart {
+  min-width: 0;
+  margin: 0;
+}
+
+.chart [role="slider"] {
+  position: relative;
+  touch-action: pan-y;
+}
+
+.chart svg {
+  display: block;
+  width: 100%;
+  height: 132px;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.calls {
+  fill: var(--chart-1);
+  background: var(--chart-1);
+}
+
+.picked .calls {
+  fill: var(--text);
+}
+
+.errors {
+  fill: var(--chart-2);
+  background: var(--chart-2);
+}
+
+.chart .tip {
+  top: 0;
+  translate: -50%;
+}
+
+.chart .tip.start {
+  translate: -12px;
+}
+
+.chart .tip.end {
+  translate: calc(12px - 100%);
+}
+
+/* One column per day, so each date sits under its own bar. */
+.axis {
+  display: grid;
+  grid-template-columns: repeat(30, minmax(0, 1fr));
+  margin-top: 6px;
+  color: var(--text-2);
+  font-size: 0.78rem;
+}
+
+.axis > * {
+  justify-self: center;
+  white-space: nowrap;
+}
+
+.axis > :first-child {
+  justify-self: start;
+}
+
+.axis > :last-child {
+  justify-self: end;
+}
+
+/* The 30-day figures under today's, one to a line. */
+.stats {
+  display: flex;
+  flex-direction: column;
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem;
+}
+
+/* Side by side, the two lists share one height. */
+.breakdowns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.breakdowns .panel {
+  margin: 0;
+}
+
+.breakdowns .wide {
+  grid-column: 1 / -1;
+}
+
+/* A card's heading with its range switch on the right. */
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.card-head h2 {
+  margin: 0;
+}
+
+.bars {
+  font-size: 0.9rem;
+}
+
+/* Two columns, each filled top to bottom (--rows is half the rows, rounded up). A grid, not CSS
+   columns: those split a row's tip across the column break. */
+.wide .bars {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows), auto);
+  grid-auto-flow: column;
+  column-gap: 40px;
+}
+
+/* One row in all three cards: the name in the Recent calls style; at the right the total, and a
+   failure rate just before it; the bar beneath. */
+.bars li {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 5px 0 7px;
+}
+
+/* A long name wraps rather than being cut. */
+.bars .item {
+  overflow-wrap: anywhere;
+}
+
+.figures {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.bars .bar {
+  grid-column: 1 / -1;
+  height: 6px;
+  border-radius: var(--radius-chip);
+  background: var(--surface-2);
+}
+
+.bars .calls {
+  display: flex;
+  justify-content: flex-end;
+  height: 100%;
+  border-radius: var(--radius-chip);
+  overflow: hidden;
+}
+
+.bars .errors {
+  min-width: 2px;
+}
+
+/* A bar row's and a token cell's tip are one short line. */
+.bars .tip,
+.recent .tip {
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+/* Over the row's own bar, under its count: the 17 px of gap, bar and padding beneath the text, and
+   4 px of the next row's top padding. So it covers no other row's text and never the card's head. */
+.bars .tip {
+  top: calc(100% - 17px);
+  right: 0;
+}
+
+.recent .tipped {
+  position: relative;
+}
+
+/* Beside the figure, on its own row. */
+.recent .tip {
+  top: 50%;
+  right: calc(100% + 6px);
+  translate: 0 -50%;
+}
+
+/* Whole on a desktop, beside chips that do not wrap either (Chromium breaks at <wbr> even in
+   nowrap text, so those are taken out); on narrower screens it breaks after a separator. */
+.tool,
+.recent .tags {
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+.tool wbr {
+  display: none;
+}
+
+/* An error row's own detail: its text across the row, in a box of its own. */
+.detail {
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border-radius: var(--radius-control);
+  font-size: 0.85rem;
+  /* Breaks inside a word only when a word (a long URL) does not fit, and lets the cell narrow. */
+  overflow-wrap: anywhere;
+}
+
+.detail p {
+  max-width: 90ch;
+  margin: 0;
+}
+
+.detail .capped {
+  margin-top: 8px;
+  color: var(--text-2);
+  font-size: 0.8rem;
+}
+
+.more {
+  margin-top: 12px;
+}
+
+.start ol {
+  margin: 0;
+  padding-left: 1.4em;
+  line-height: 1.9;
+}
+
+/* Providers */
+
+h2.group {
+  margin: 8px 0 12px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 16px;
+  margin: 0 0 32px;
+}
+
+/* Body and footer are two rows shared by the cards of a grid row, so the footers line up. */
+.cards li,
+.card {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  gap: 8px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.card {
+  padding: 18px 20px 14px;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+.card:hover {
+  border-color: var(--line-strong);
+}
+
+/* Icon, name and tag on one line, centred on the name's capitals (each box is trimmed to them);
+   the tag at the right end. */
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+}
+
+.card-title .display,
+.title h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.card-title .display {
+  margin-right: auto;
+}
+
+.card-title .name,
+.title .name,
+.docs {
+  text-box: trim-both cap alphabetic;
+}
+
+/* A name never wraps: one too long for the line is cut with an ellipsis. */
+.card-title .name,
+.title .name {
+  min-width: 0;
+  white-space: nowrap;
+  overflow-x: clip;
+  text-overflow: ellipsis;
+}
+
+.card-text {
+  color: var(--text-2);
+  font-size: 0.92rem;
+}
+
+/* The count keeps its place on the first line; a second chip wraps beneath the first. */
+.card-foot {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 0.85rem;
+}
+
+/* The tool count, and beneath it how many tools are new. */
+.card-count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+/* Why a provider needs attention, over the footer while the card is hovered or focused. */
+.card-foot .tip {
+  left: 0;
+  bottom: calc(100% + 4px);
+  white-space: normal;
+}
+
+/* A tip shows for the hovered element, or for the one focused from the keyboard while none is
+   hovered: never two at once, and a clicked one goes when the pointer leaves. On a touch screen a
+   tap focuses, and a tap elsewhere hides it. Hidden, it is still read by screen readers. */
+.tipped:not(:hover, :focus-visible) .tip,
+:root:has(.tipped:hover) .tipped:not(:hover) .tip {
+  clip-path: inset(50%);
+}
+
+@media (hover: none) {
+  .tipped:focus .tip {
+    clip-path: none;
+  }
+}
+
+/* A provider's icon: an app icon's rounded square, twice the height of the name's capitals, centred
+   on them. Without an image, the name's first letter, one capital high, centred on a quiet fill. A
+   hairline drawn over the edge (an outline paints above the image) keeps a white icon from melting
+   into a light card and a dark one into a dark card. */
+.logo {
+  display: inline-block;
+  flex: none;
+  width: 2cap;
+  height: 2cap;
+  overflow: hidden;
+  font: 600 1em / 1 var(--font-display);
+  font-size-adjust: cap-height 0.76;
+  text-align: center;
+  text-box: trim-both cap alphabetic;
+  align-content: center;
+  color: var(--text-2);
+  background: var(--tile);
+  border-radius: 22%;
+  outline: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  outline-offset: -1px;
+}
+
+.logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* A key's last four characters, as large as the words beside them. */
+.tag .mono {
+  font-size: 1em;
+}
+
+/* Provider page */
+
+/* The padding makes a finger-sized target without moving anything. */
+.back {
+  display: inline-block;
+  padding: 10px 0;
+  margin: -10px 0 0;
+}
+
+/* The icon, the name, its tag and Docs on one line, centred like a card's; the description below. */
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 14px;
+  font-size: 0.85rem;
+}
+
+.title h1 {
+  margin: 0 6px 0 0;
+}
+
+.title + .lead {
+  margin-bottom: 20px;
+}
+
+form.inline {
+  margin-top: 14px;
+  padding-top: 2px;
+  border-top: 1px solid var(--line);
+}
+
+form.inline .row {
+  margin: 0;
+}
+
+/* Kind, tool, time: the kinds and the times line up. */
+.changes li {
+  display: grid;
+  grid-template-columns: 6.5em minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.tools > li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+}
+
+.tools > li + li,
+.changes li + li {
+  border-top: 1px solid var(--line);
+}
+
+.tools > li > div {
+  min-width: 0;
+}
+
+.tools .switch {
+  margin-top: 2px;
+}
+
+.tools .tag,
+.tools .badge {
+  margin-left: 8px;
+}
+
+.tools .gone .mono {
+  text-decoration: line-through;
+}
+
+.about {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: 0.85rem;
+}
+
+/* A description's first line, cut with an ellipsis. */
+.about .line {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* The whole line opens the description; "More" stays at its end. */
+.opener {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  text-align: left;
+  text-box: normal;
+}
+
+.opener .line {
+  flex: 1;
+}
+
+/* In a description's grey text, More and Less keep the link colour, or they would read as text. */
+.opener > :last-child,
+.about .disclose:not(.opener) {
+  color: var(--link);
+}
+
+button.opener:hover:enabled {
+  color: inherit;
+  text-decoration: none;
+}
+
+button.opener:hover:enabled > :last-child {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.about p,
+.about ul {
+  margin: 0 0 4px;
+}
+
+.about ul {
+  padding-left: 1.2em;
+}
+
+.panel form + form {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.note {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+}
+
+.review {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.diff {
+  margin-top: 8px;
+}
+
+.words {
+  margin: 0;
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.9rem;
+}
+
+del,
+.del {
+  color: var(--danger);
+}
+
+ins,
+.ins {
+  color: var(--ok);
+}
+
+.lines {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 360px;
+  overflow: auto;
+  padding: 8px 10px;
+  background: var(--surface-2);
+  border-radius: var(--radius-control);
+  font-size: 0.8rem;
+}
+
+/* Agents */
+
+.connect h2 {
+  margin: 20px 0 8px;
+}
+
+.connect p {
+  margin: 0 0 10px;
+}
+
+.done:empty {
+  margin: 0;
+}
+
+.confirm {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Narrower screens, one block per breakpoint, widest first. */
+
+/* Below this width a tool ID may break after a separator, so the Recent calls table fits its card. */
+@media (max-width: 1099px) {
+  .tool {
+    white-space: normal;
+  }
+  .tool wbr {
+    display: inline;
+  }
+}
+
+@media (max-width: 899px) {
+  .top .signout {
+    display: none;
+  }
+  /* Tables stack each row; recent calls take a fixed order: time and latency, the tool, the agent
+     and size, then the status. */
+  .stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .stack tr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .stack td {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+  .stack td:first-child {
+    flex-basis: 100%;
+  }
+  /* The name and Revoke share the first line. */
+  .agents td:first-child {
+    display: block;
+    flex: 1;
+    order: -2;
+    align-self: center;
+  }
+  .agents td.end {
+    order: -1;
+    align-self: center;
+  }
+  /* The four call counts: four equal columns, each its label over its number. */
+  .agents td.n {
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .agents td:nth-child(2) {
+    flex-basis: 100%;
+  }
+  .stack td[data-label]:not(:first-child)::before {
+    content: attr(data-label);
+    color: var(--text-2);
+    font: 600 0.65rem var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .stack tr.opened {
+    border-bottom: 0;
+  }
+  .recent tr {
+    display: grid;
+    grid-template:
+      "time latency"
+      "tool tool"
+      "agent size"
+      "status details" / minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 4px 12px;
+  }
+  .recent .said {
+    display: block;
+    padding-top: 0;
+  }
+  .said td {
+    display: block;
+  }
+  .recent td:nth-child(1) {
+    grid-area: time;
+    color: var(--text-2);
+  }
+  .recent td:nth-child(2) {
+    display: block;
+    grid-area: agent;
+  }
+  .recent td:nth-child(3) {
+    grid-area: tool;
+  }
+  .recent td:nth-child(4) {
+    grid-area: status;
+  }
+  .recent td:nth-child(5) {
+    grid-area: details;
+    justify-content: flex-end;
+  }
+  .recent td.n {
+    justify-content: flex-end;
+  }
+  /* Each reads as what it is, without its label; the size says it is about so many tokens. */
+  .recent td::before {
+    display: none;
+  }
+  .recent td.size[data-label]::before,
+  .recent td.size::after {
+    all: unset;
+  }
+  .recent td.size[data-label]::before {
+    content: "≈";
+  }
+  .recent td.size::after {
+    content: attr(data-label);
+  }
+}
+
+@media (max-width: 719px) {
+  .wide .bars {
+    display: block;
+  }
+  .top {
+    gap: 8px;
+    padding: 0 8px 0 16px;
+  }
+  .top .segmented {
+    display: none;
+  }
+  .theme-step {
+    display: inline-flex;
+  }
+  .top nav {
+    justify-content: center;
+  }
+  /* The hero keeps its larger padding. */
+  .panel:not(.hero) {
+    padding: 14px 16px;
+  }
+  button,
+  a.button,
+  .segmented button,
+  input:not([type="checkbox"]) {
+    min-height: 40px;
+  }
+  /* A finger-sized target that keeps the line's height. */
+  .disclose {
+    min-height: 40px;
+    margin-block: -15px;
+  }
+  .opener {
+    padding-block: 10px;
+    margin-block: -10px;
+  }
+  /* Padding on an inline box widens the tap target without moving the line. */
+  .recent .tipped {
+    padding-block: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The brand keeps only its mark and the nav tightens. */
+@media (max-width: 559px) {
+  .top .word {
+    display: none;
+  }
+  .top {
+    gap: 0;
+    padding: 0 4px 0 8px;
+  }
+  /* A 40 px target around the cap-high box. */
+  .top .brand {
+    margin: 0;
+    padding: calc(20px - 0.5cap) 6px;
+  }
+  .top .brand .mark {
+    margin: 0;
+  }
+  .top nav {
+    gap: 0;
+    justify-content: space-evenly;
+  }
+  .top nav a {
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+  }
+  /* Cap height 7 px in a 25 px pill: still an even gap. */
+  .top nav span {
+    min-height: 25px;
+    padding: 5px 6px;
+    font-size: calc(7px / 0.76);
+  }
+  .banner {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 389px) {
+  .top nav a {
+    letter-spacing: 0.04em;
+  }
+  .top nav span {
+    padding: 5px 4px;
+  }
+}

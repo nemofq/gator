@@ -1,0 +1,27 @@
+id = "zoodata"
+name = "ZooData"
+description = "Amazon products and reviews: search, details, live prices, price and sales history, best sellers"
+category = ["shopping"]
+mcp_url = "https://api.zoodata.ai/mcp"
+signup_url = "https://zoodata.ai/api-keys"
+docs_url = "https://zoodata.ai/docs"
+read_only = false
+# Amazon shopping data only: the market, keyword, TikTok, fashion, web, video and watchlist tools stay off.
+default_enabled_tools = [
+  "openapi_v2_products_search",
+  "openapi_v2_products_detail",
+  "openapi_v3_realtime_product",
+  "openapi_v2_products_history",
+  "openapi_v2_products_sales_trend",
+  "openapi_v2_reviews_search",
+  "openapi_v2_realtime_reviews",
+  "openapi_v2_voc_analysis",
+  "openapi_v2_realtime_bestsellers",
+  "openapi_v2_products_leaderboard",
+  "openapi_v2_competitors",
+  "openapi_v2_categories",
+]
+
+[auth]
+header = "Authorization"
+format = "Bearer {key}"

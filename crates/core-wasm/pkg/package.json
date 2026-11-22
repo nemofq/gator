@@ -1,0 +1,8 @@
+{
+  "name": "@gator/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "gator_core.js",
+  "types": "gator_core.d.ts"
+}

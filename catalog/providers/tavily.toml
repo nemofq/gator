@@ -1,0 +1,14 @@
+id = "tavily"
+name = "Tavily"
+description = "Web search, recent news and the text of any web page"
+category = ["search", "news"]
+mcp_url = "https://mcp.tavily.com/mcp"
+signup_url = "https://app.tavily.com"
+docs_url = "https://docs.tavily.com/documentation/mcp"
+read_only = false
+default_enabled_tools = ["tavily_search", "tavily_extract"]
+quota_signals = ["exceeds your plan's set usage limit", "exceeds the pay-as-you-go limit"]
+
+[auth]
+header = "Authorization"
+format = "Bearer {key}"
