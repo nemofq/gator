@@ -6,6 +6,11 @@
 
 Gator puts all the data MCP servers your agents need behind one endpoint. You stop configuring every MCP in every agent, and get one place to manage them, see their usage and stay in control. It runs on your own Cloudflare account with your own keys, and its core is written in Rust for excellent performance.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/overview-dark.webp">
+  <img src=".github/screenshots/overview-light.webp" alt="The dashboard's Overview: calls per day, calls by provider and by agent, and the top tools">
+</picture>
+
 ## Why
 
 **Agents are missing data.** Ask yours to research a purchase, and Amazon blocks it. Ask it for what real users think, and Reddit has shut down its RSS feeds. Ask it about a project on GitHub, and the public API leaves things out and limits how often it can ask.
@@ -26,6 +31,16 @@ Gator fixes both.
 - **A catalog of providers.** Enable one, paste its key, done. Or add any other MCP server that takes a key in a header.
 - **A dashboard.** See what each agent calls, how often, and what failed. Switch individual tools on or off from the same place.
 - **No surprise tool changes.** When a provider adds or changes a tool, you see it. New tools stay off until you turn them on, and you can choose to approve changes before your agents see them.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/providers-dark.webp">
+  <img src=".github/screenshots/providers-light.webp" alt="Providers: each one's status and how many of its tools are on">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/agents-dark.webp">
+  <img src=".github/screenshots/agents-light.webp" alt="Agents: each connected agent, when it was last used and its calls">
+</picture>
 
 ## Quick start
 
