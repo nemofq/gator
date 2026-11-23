@@ -7,6 +7,10 @@
   "compatibility_flags": ["global_fetch_strictly_public"],
   // A smaller script is less for a cold isolate to parse.
   "minify": true,
+  // Serve at <name>.<account>.workers.dev on every deploy; a Worker made by the
+  // Deploy button otherwise starts with it off. No preview URLs: one instance only.
+  "workers_dev": true,
+  "preview_urls": false,
   "assets": {
     "directory": "apps/dashboard/dist",
     "binding": "ASSETS",
