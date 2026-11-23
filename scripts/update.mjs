@@ -1,6 +1,6 @@
 // `node scripts/update.mjs`: updates a copy made by the Deploy to Cloudflare button. See README, Update.
-// Takes every file from nemofq/gator's main branch, keeps this Worker's name and the IDs that
-// Cloudflare wrote into wrangler.jsonc, and commits. Push afterwards to deploy.
+// Pulls the copy, takes every file from nemofq/gator's main branch, keeps this Worker's name and
+// the IDs that Cloudflare wrote into wrangler.jsonc, and commits. Push afterwards to deploy.
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 
@@ -21,6 +21,25 @@ const fail = (sentence) => {
 
 process.chdir(git("rev-parse", "--show-toplevel"));
 if (git("status", "--porcelain")) fail("Commit or discard your changes first.");
+
+// Start from what the copy on GitHub has, so the push afterwards is a fast-forward.
+const tracked = (() => {
+  try {
+    return execFileSync("git", ["rev-parse", "--abbrev-ref", "@{upstream}"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return "";
+  }
+})();
+if (tracked) {
+  try {
+    git("pull", "--ff-only", "--quiet");
+  } catch {
+    fail(`This clone and ${tracked} have both changed. Bring them together with git, then run this again.`);
+  }
+}
 
 const ours = readFileSync(CONFIG, "utf8");
 const kept = KEEP.map((line) => ours.match(line)?.[0]);
