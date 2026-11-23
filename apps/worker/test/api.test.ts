@@ -788,7 +788,7 @@ describe("settings, session and overview", () => {
     expect((await call("GET", "/api/index")).status).toBe(404);
     expect((await call("GET", "/api/session")).body).toMatchObject({
       mcp_url: `${ORIGIN}/mcp`,
-      version: "0.1.0",
+      version: "0.1.2",
       keys_unreadable: [],
     });
   });

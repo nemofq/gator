@@ -115,6 +115,7 @@ export async function api<T>(path: string, method = "GET", body?: unknown): Prom
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   if (res.status === 401 && path !== "/api/login") dispatchEvent(new Event("gator-signed-out"));
+  if (method !== "GET") seen.clear();
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: `The server answered ${res.status}.` }));
     throw new Error(error.error, { cause: error });
@@ -126,10 +127,20 @@ export async function api<T>(path: string, method = "GET", body?: unknown): Prom
 export const signOut = () =>
   api("/api/logout", "POST").then(() => dispatchEvent(new Event("gator-signed-out")));
 
-/** Loads `path` on mount; `set` replaces the data after a write that returns it. */
-export function useLoad<T>(path: string) {
-  const [data, set] = useState<T>();
+/** What each path last answered, so a page opened again shows at once. Any write empties it: what
+    it changed may show on every page. */
+const seen = new Map<string, unknown>();
+
+/** Loads `path` on mount, showing what it last answered meanwhile unless `keep` is false; `set`
+    replaces the data after a write that returns it. */
+export function useLoad<T>(path: string, keep = true) {
+  const last = () => (keep ? (seen.get(path) as T | undefined) : undefined);
+  const [data, setData] = useState(last);
   const [error, setError] = useState("");
+  const set = (d: T | undefined) => {
+    if (keep) seen.set(path, d);
+    setData(d);
+  };
   const reload = () =>
     api<T>(path).then(
       (d) => {
@@ -139,7 +150,7 @@ export function useLoad<T>(path: string) {
       (e: Error) => setError(e.message),
     );
   useEffect(() => {
-    set(undefined);
+    setData(last());
     reload();
   }, [path]);
   return { data, error, set, reload };

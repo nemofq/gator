@@ -22,8 +22,8 @@ export function ago(ms: number | null) {
 }
 
 // Dates and times are written the browser's way: its locale's order and month names ("Nov 20",
-// "20 Nov", "20. Nov."), its clock, its time zone. The year shows only outside this one, judged in
-// the zone the date is written in.
+// "20 Nov", "20. Nov."), its time zone. The clock is the 24-hour one everywhere: times here are
+// read like a log's. The year shows only outside this one, judged in the zone the date is written in.
 const stamp = (ms: number, options: Intl.DateTimeFormatOptions) => {
   const year = (t: number) =>
     new Date(t).toLocaleString("en", { year: "numeric", timeZone: options.timeZone });
@@ -43,11 +43,20 @@ export const day = (iso: string) => stamp(Date.parse(iso), { timeZone: "UTC" });
 
 /** The date with the time, to the second or to the minute. */
 export const time = (ms: number, seconds = true) =>
-  stamp(ms, { hour: "numeric", minute: "2-digit", second: seconds ? "2-digit" : undefined });
+  stamp(ms, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: seconds ? "2-digit" : undefined,
+    hourCycle: "h23",
+  });
 
 /** Everything, weekday, year and time zone included, for a tooltip. */
 export const fullTime = (ms: number) =>
-  new Intl.DateTimeFormat(undefined, { dateStyle: "full", timeStyle: "long" }).format(ms);
+  new Intl.DateTimeFormat(undefined, {
+    dateStyle: "full",
+    timeStyle: "long",
+    hourCycle: "h23",
+  }).format(ms);
 
 /** An identifier or URL that may break after a separator ("." "_" "/" "?" "&" "="), never inside a
     word, nor inside "://". */

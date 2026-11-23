@@ -37,7 +37,7 @@ type Connection = { era: "legacy" | "current"; version: string; sessionId: strin
 
 export const CURRENT_VERSION = "2026-07-28";
 /** The `clientInfo` Gator sends upstream and the `serverInfo` it answers with. */
-export const GATOR = { name: "gator", version: "0.1.0" };
+export const GATOR = { name: "gator", version: "0.1.2" };
 const LEGACY_VERSION = "2025-11-25";
 /** Stops a server that keeps answering with another cursor. */
 const MAX_PAGES = 50;

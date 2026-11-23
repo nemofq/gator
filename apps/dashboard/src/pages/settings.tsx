@@ -19,6 +19,8 @@ export function SettingsPage(props: { session: Session }) {
     id: key,
     type: "number" as const,
     required: true,
+    // Drawn before the settings arrive, so nothing below moves when they do.
+    readOnly: !form,
     value: form?.[key],
     onInput: (e: Event) => {
       setEdited({
@@ -36,36 +38,34 @@ export function SettingsPage(props: { session: Session }) {
     <>
       <h1 class="display">Settings</h1>
       {error && <Alert>{error}</Alert>}
-      {form && (
-        <form class="panel" onSubmit={save}>
-          <h2 class="display">Global limits</h2>
-          <p class="hint">
-            Defaults for every provider. A provider's own page can set its timeout.
-          </p>
-          <label for="result_limit">Result size limit (characters)</label>
-          <input
-            {...field("result_limit")}
-            min={1000}
-            max={500000}
-            step={1000}
-            aria-describedby="result_limit-hint"
-          />
-          <p class="hint" id="result_limit-hint">
-            {form.result_limit > 0 && `About ${num(Math.round(form.result_limit / 4))} tokens. `}
-            Longer tool results are cut here, with a note telling the agent to ask for less. 1,000
-            to 500,000.
-          </p>
-          <label for="timeout_ms">Provider timeout (ms)</label>
-          <input {...field("timeout_ms")} min={1000} max={120000} step={1000} />
-          <p class="hint">How long to wait for a provider. 1,000 to 120,000.</p>
-          {action.error && <Alert>{action.error}</Alert>}
-          <div class="row">
-            <Button action={action} class="primary" done="Saved">
-              Save
-            </Button>
-          </div>
-        </form>
-      )}
+      <form class="panel" onSubmit={save}>
+        <h2 class="display">Global limits</h2>
+        <p class="hint">Defaults for every provider. A provider's own page can set its timeout.</p>
+        <label for="result_limit">Result size limit (characters)</label>
+        <input
+          {...field("result_limit")}
+          min={1000}
+          max={500000}
+          step={1000}
+          aria-describedby="result_limit-hint"
+        />
+        <p class="hint" id="result_limit-hint">
+          {form &&
+            form.result_limit > 0 &&
+            `About ${num(Math.round(form.result_limit / 4))} tokens. `}
+          Longer tool results are cut here, with a note telling the agent to ask for less. 1,000 to
+          500,000.
+        </p>
+        <label for="timeout_ms">Provider timeout (ms)</label>
+        <input {...field("timeout_ms")} min={1000} max={120000} step={1000} />
+        <p class="hint">How long to wait for a provider. 1,000 to 120,000.</p>
+        {action.error && <Alert>{action.error}</Alert>}
+        <div class="row">
+          <Button action={action} class="primary" done="Saved">
+            Save
+          </Button>
+        </div>
+      </form>
       <section class="panel">
         <h2 class="display">Encryption key</h2>
         {unreadable.length === 0 ? (

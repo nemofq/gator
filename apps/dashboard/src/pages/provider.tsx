@@ -487,7 +487,9 @@ const rank = (t: Tool, isNew: boolean) =>
 
 export function ProviderPage(props: { id: string; refreshSession: () => void }) {
   const base = `/api/providers/${encodeURIComponent(props.id)}`;
-  const { data: p, error, set, reload } = useLoad<ProviderDetail>(base);
+  // Never from memory: what the page shows first (setup or not, which tools are new) is decided
+  // once, from the first answer.
+  const { data: p, error, set, reload } = useLoad<ProviderDetail>(base, false);
   // Only for the timeout field's default; the page does not wait for it.
   const { data: settings, error: settingsError } = useLoad<Settings>("/api/settings");
   const [test, setTest] = useState<Test>();
