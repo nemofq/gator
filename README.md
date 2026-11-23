@@ -29,33 +29,32 @@ Gator fixes both.
 
 ## Quick start
 
-You need a Cloudflare account. The Workers Free plan is enough.
-
-**One click.**
+You need a Cloudflare account and a GitHub account. The Workers Free plan is enough.
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/nemofq/gator)
 
-Cloudflare asks for the two secrets below.
+1. **Git account:** connect or choose your GitHub account. Cloudflare creates your copy of Gator there and deploys from it. Private or public is your choice; the copy holds no secrets.
+2. **Project name:** keep `gator` or choose your own. It names your copy, your Worker and its address, `https://<name>.<you>.workers.dev`.
+3. **Secrets:** enter the two secrets below.
+4. Leave the KV namespace, D1 database and advanced settings as they are, and select **Deploy**.
 
-**From the command line.** You need Node.js 22.12+ and pnpm; Rust is not needed.
+**From the command line**, without a GitHub copy. You need Node.js 22.12+ and pnpm.
 
 ```bash
-git clone https://github.com/nemofq/gator
-cd gator
-pnpm install
-pnpm run setup
+git clone https://github.com/nemofq/gator && cd gator
+pnpm install && pnpm run setup
 ```
 
-`setup` signs you in to Cloudflare if needed, creates the database, generates the encryption key, asks for an owner password, and deploys.
+`setup` signs you in to Cloudflare, creates the database, generates the encryption key, asks for an owner password, and deploys.
 
-Either way, you get two URLs:
+Either way, you get:
 
 ```
 Dashboard:    https://gator.<you>.workers.dev/
 MCP endpoint: https://gator.<you>.workers.dev/mcp
 ```
 
-Open the dashboard, sign in, enable a provider and paste its key.
+Sign in to the dashboard, enable a provider and paste its key.
 
 ### The two secrets
 
@@ -66,11 +65,16 @@ Open the dashboard, sign in, enable a provider and paste its key.
 
 ### Update
 
-Pull and deploy again. Providers, keys and connected agents are kept.
+Providers, keys and connected agents are kept.
+
+**One click:** in a clone of your copy, run the update script and push. Cloudflare redeploys. The script takes every file from this repository and keeps your Worker's name and IDs.
 
 ```bash
-git pull && pnpm run deploy
+git clone https://github.com/<you>/<name> && cd <name>
+node scripts/update.mjs && git push
 ```
+
+**Command line:** `git pull && pnpm run deploy`
 
 ## Connect an agent
 
