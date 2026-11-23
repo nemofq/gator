@@ -2,3 +2,7 @@
   Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer
+
+# A provider's icon is kept for a week, so pages paint it without asking again.
+/icons/*
+  Cache-Control: public, max-age=604800
