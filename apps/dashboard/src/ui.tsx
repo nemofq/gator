@@ -284,30 +284,28 @@ export function Alert(props: { children: ComponentChildren }) {
 
 /** Runs the actions of a group of controls, one at a time. It exposes whether one is running, the
     message it failed with, and what the control that started it (`by`; a form's submit button when
-    left out) shows: nothing for 300 ms, so a quick action never flashes, then a ring; after a slow
+    left out) shows: nothing for 300 ms, so a quick action never flashes, then a ring; after any
     success, a check for 1.5 s. An action that resolves `false` ran but did not succeed, and the
-    page says why: no check. */
+    page says why: no check. `run` resolves whether it succeeded, so a follow-up such as leaving
+    the page can wait for the check to be seen. */
 export function useAction() {
   const [error, setError] = useState("");
   const [shown, setShown] = useState<{ by: string; icon?: "ring" | "check" }>();
   const run = async (action: () => Promise<unknown>, by = "submit") => {
-    let slow = false;
-    const timer = setTimeout(() => {
-      slow = true;
-      setShown({ by, icon: "ring" });
-    }, 300);
+    const timer = setTimeout(() => setShown({ by, icon: "ring" }), 300);
     setShown({ by });
     setError("");
+    let ok = false;
     try {
-      if ((await action()) === false) slow = false;
+      ok = (await action()) !== false;
     } catch (e) {
-      slow = false;
       setError((e as Error).message);
     }
     clearTimeout(timer);
-    const done = slow ? ({ by, icon: "check" } as const) : undefined;
+    const done = ok ? ({ by, icon: "check" } as const) : undefined;
     setShown(done);
     if (done) setTimeout(() => setShown((s) => (s === done ? undefined : s)), 1500);
+    return ok;
   };
   return { busy: shown !== undefined && shown.icon !== "check", error, run, shown };
 }
@@ -316,19 +314,27 @@ type Action = ReturnType<typeof useAction>;
 
 /** A button that runs `onRun` with `action`, or without it submits its form, whose submit runs
     `action`. While the action runs, every button of it is disabled; this one is busy, not faded,
-    and shows what `useAction` says before its label, announcing a success it marked. The label
-    alone and the label after the icon share one grid cell, the one not shown hidden: the button is
-    always as wide as the wider, so neither it nor anything beside it moves. */
+    and shows a ring before its label. After a success it shows a check and its `done` word ("Saved")
+    and announces the word; one whose success leaves the page or removes it has none. Its label, the
+    ring and label, and the check and word share one grid cell, the ones not shown hidden: the
+    button is always as wide as the widest, so neither it nor anything beside it moves. */
 export function Button(props: {
   action: Action;
   onRun?: () => Promise<unknown>;
   class?: string;
+  done?: string;
   children: ComponentChildren;
 }) {
   const { action, onRun } = props;
   const id = useId();
   const by = onRun ? id : "submit";
   const mine = action.shown?.by === by ? action.shown : undefined;
+  const at = mine?.icon === "ring" ? 1 : mine?.icon === "check" ? 2 : 0;
+  const layers = [
+    props.children,
+    [<Icon key="i" name="ring" />, props.children],
+    [<Icon key="i" name="check" />, props.done ?? props.children],
+  ];
   return (
     <>
       <button
@@ -338,14 +344,14 @@ export function Button(props: {
         aria-busy={action.busy && mine ? true : undefined}
         onClick={onRun && (() => action.run(onRun, by))}
       >
-        <span class={mine?.icon && "hide"}>{props.children}</span>
-        <span class={mine?.icon ? undefined : "hide"}>
-          <Icon name={mine?.icon ?? "check"} />
-          {props.children}
-        </span>
+        {layers.map((l, i) => (
+          <span key={i} class={i === at ? undefined : "hide"} aria-hidden={i !== at || undefined}>
+            {l}
+          </span>
+        ))}
       </button>
       <span class="sr-only" role="status">
-        {mine?.icon === "check" && "Done"}
+        {at === 2 && props.done}
       </span>
     </>
   );

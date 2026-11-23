@@ -8,7 +8,6 @@ const workerName = (host: string) => /^([a-z0-9-]+)\.[a-z0-9-]+\.workers\.dev$/.
 export function SettingsPage(props: { session: Session }) {
   const { data, error } = useLoad<Settings>("/api/settings");
   const [edited, setEdited] = useState<Settings>();
-  const [saved, setSaved] = useState(false);
   const action = useAction();
   const out = useAction();
   const form = edited ?? data;
@@ -22,7 +21,6 @@ export function SettingsPage(props: { session: Session }) {
     required: true,
     value: form?.[key],
     onInput: (e: Event) => {
-      setSaved(false);
       setEdited({
         ...(form as Settings),
         [key]: Number((e.currentTarget as HTMLInputElement).value),
@@ -31,10 +29,7 @@ export function SettingsPage(props: { session: Session }) {
   });
   const save = (e: Event) => {
     e.preventDefault();
-    action.run(async () => {
-      setEdited(await api<Settings>("/api/settings", "PATCH", form));
-      setSaved(true);
-    });
+    action.run(async () => setEdited(await api<Settings>("/api/settings", "PATCH", form)));
   };
 
   return (
@@ -65,10 +60,9 @@ export function SettingsPage(props: { session: Session }) {
           <p class="hint">How long to wait for a provider. 1,000 to 120,000.</p>
           {action.error && <Alert>{action.error}</Alert>}
           <div class="row">
-            <Button action={action} class="primary">
+            <Button action={action} class="primary" done="Saved">
               Save
             </Button>
-            <span role="status">{saved && "Saved."}</span>
           </div>
         </form>
       )}

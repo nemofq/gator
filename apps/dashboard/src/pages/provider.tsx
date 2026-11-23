@@ -174,7 +174,7 @@ function KeyForm(props: {
           value={key}
           onInput={(e) => setKey(e.currentTarget.value)}
         />
-        <Button action={action} class="primary">
+        <Button action={action} class="primary" done="Saved">
           Save {noun}
         </Button>
         {last4 !== null && (
@@ -242,17 +242,24 @@ function Keys(props: { p: ProviderDetail; patch: (body: object) => Promise<void>
   );
 }
 
-/** The page of a provider that is off and has no key: how to connect it, and nothing else. */
-function Setup(props: { p: ProviderDetail; connect: (key: string) => Promise<void> }) {
+/** The page of a provider that is off and has no key: how to connect it, and nothing else. Once
+    connected, "Connected" shows for a second before the full page `opened` brings. */
+function Setup(props: {
+  p: ProviderDetail;
+  connect: (key: string) => Promise<void>;
+  opened: () => void;
+}) {
   const { p } = props;
   const [key, setKey] = useState("");
   const action = useAction();
-  const submit = (e: Event) => {
+  const submit = async (e: Event) => {
     e.preventDefault();
-    action.run(() => props.connect(key.trim()));
+    // Not again while "Connected" shows.
+    if (action.shown) return;
+    if (await action.run(() => props.connect(key.trim()))) setTimeout(props.opened, 1000);
   };
   const button = (
-    <Button action={action} class="primary">
+    <Button action={action} class="primary" done="Connected">
       Connect
     </Button>
   );
@@ -497,6 +504,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
   // Whether it opened not set up: off, with no key. Decided once, so switching it off or removing
   // its key here does not swap the page under the pointer.
   const setup = useRef<boolean>(undefined);
+  const [, setOpened] = useState(false);
   // The tools that were new when the page opened keep their tag until the owner leaves it. Opening
   // the page marks them seen once it is visible; a failure is not the owner's doing, so it is silent.
   const [fresh, setFresh] = useState<string[]>();
@@ -533,9 +541,13 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
       await api(base, "PATCH", key ? { enabled: false, key: null } : { enabled: false });
       throw new Error(on.refresh_error);
     }
-    setup.current = false;
+    // Loaded now, so the full page is ready when "Connected" has been seen.
     await reload();
     props.refreshSession();
+  };
+  const opened = () => {
+    setup.current = false;
+    setOpened(true);
   };
   setup.current ??= !p.enabled && p.key_last4 === null;
   const on = action.busy && action.shown?.by === "enabled" ? Boolean(wanted) : p.enabled;
@@ -577,7 +589,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
     return (
       <>
         {head}
-        <Setup p={p} connect={connect} />
+        <Setup p={p} connect={connect} opened={opened} />
       </>
     );
 
@@ -613,6 +625,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
         <div class="row">
           <Button
             action={action}
+            done="Refreshed"
             onRun={async () => {
               const listed = await api<ProviderDetail>(`${base}/refresh`, "POST");
               set(listed);
@@ -624,6 +637,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
           </Button>
           <Button
             action={action}
+            done="Tested"
             onRun={async () => {
               const result = await api<Test>(`${base}/test`, "POST");
               setTest(result);
@@ -670,7 +684,9 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
               value={timeout ?? p.timeout_ms ?? ""}
               onInput={(e) => setTimeoutMs(e.currentTarget.value)}
             />
-            <Button action={action}>Save</Button>
+            <Button action={action} done="Saved">
+              Save
+            </Button>
           </div>
           <p class="hint">Leave empty to use the default from Settings.</p>
         </form>

@@ -159,8 +159,9 @@ button.danger {
   border-color: var(--danger);
 }
 
-/* An action's button (ui.tsx Button): its label alone, and the label after a ring or a check, in
-   one grid cell, each trimmed to its capitals like a button's line; the one not shown is hidden. */
+/* An action's button (ui.tsx Button): its label, the label after a ring, and a check before its
+   done word, in one grid cell, each trimmed to its capitals like a button's line; the ones not
+   shown are hidden. */
 .act {
   display: inline-grid;
   justify-items: center;
