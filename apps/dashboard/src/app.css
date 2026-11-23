@@ -75,6 +75,7 @@ a.button,
   width: 1cap;
   height: 1cap;
   margin-right: 0.45em;
+  overflow: visible;
   fill: currentColor;
 }
 
@@ -156,6 +157,56 @@ button.primary:hover:enabled {
 button.danger {
   color: var(--danger);
   border-color: var(--danger);
+}
+
+/* An action's button (ui.tsx Button): its label alone, and the label after a ring or a check, in
+   one grid cell, each trimmed to its capitals like a button's line; the one not shown is hidden. */
+.act {
+  display: inline-grid;
+  justify-items: center;
+}
+
+.act > * {
+  grid-area: 1 / 1;
+  text-box: trim-both cap alphabetic;
+}
+
+.act > .hide {
+  visibility: hidden;
+}
+
+.act .icon {
+  margin: 0 0.6em 0 0;
+}
+
+/* The running one is not faded: its ring says it is busy. */
+.act[aria-busy="true"] {
+  opacity: 1;
+  cursor: progress;
+}
+
+/* After a switch's label (ui.tsx Pending). */
+.pending .icon {
+  margin: 0 0 0 0.5em;
+}
+
+/* The ring turns about its centre; with reduced motion it pulses instead. */
+.spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@keyframes pulse {
+  to {
+    opacity: 0.35;
+  }
 }
 
 /* Holds "Copied" without changing width. */
@@ -293,6 +344,9 @@ input[type="number"] {
 @media (prefers-reduced-motion: reduce) {
   .switch::before {
     transition: none;
+  }
+  .spin {
+    animation: pulse 0.8s ease-in-out infinite alternate;
   }
 }
 

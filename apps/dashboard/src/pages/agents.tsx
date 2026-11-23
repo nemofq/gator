@@ -1,23 +1,22 @@
 import { useState } from "preact/hooks";
 import { type Agent, api, useLoad } from "../api";
-import { Alert, agentLabel, ago, CopyLine, Icon, num, Path, useAction } from "../ui";
+import { Alert, agentLabel, ago, Button, CopyLine, Icon, num, Path, useAction } from "../ui";
 
 export function Agents(props: { mcpUrl: string }) {
   const { data, error, set } = useLoad<Agent[]>("/api/agents");
   const [connect, setConnect] = useState<boolean>();
   const [confirming, setConfirming] = useState<string>();
   const [gone, setGone] = useState("");
-  const { busy, error: revokeError, run } = useAction();
+  const action = useAction();
   // Open by default until an agent is connected.
   const open = connect ?? data?.length === 0;
 
-  const revoke = (agent: Agent) =>
-    run(async () => {
-      await api(`/api/agents/${encodeURIComponent(agent.id)}`, "DELETE");
-      set(data?.filter((a) => a.id !== agent.id));
-      setConfirming(undefined);
-      setGone(agent.client_name);
-    });
+  const revoke = async (agent: Agent) => {
+    await api(`/api/agents/${encodeURIComponent(agent.id)}`, "DELETE");
+    set(data?.filter((a) => a.id !== agent.id));
+    setConfirming(undefined);
+    setGone(agent.client_name);
+  };
 
   return (
     <>
@@ -56,7 +55,7 @@ export function Agents(props: { mcpUrl: string }) {
         </section>
       )}
       {error && <Alert>{error}</Alert>}
-      {revokeError && <Alert>{revokeError}</Alert>}
+      {action.error && <Alert>{action.error}</Alert>}
       <p role="status" class="done">
         {gone && `See you later, alligator. ${gone} is disconnected.`}
       </p>
@@ -101,14 +100,9 @@ export function Agents(props: { mcpUrl: string }) {
                     {confirming === a.id ? (
                       <span class="confirm">
                         Revoke {a.client_name}? Its tokens stop working at once.
-                        <button
-                          type="button"
-                          class="danger"
-                          disabled={busy}
-                          onClick={() => revoke(a)}
-                        >
+                        <Button action={action} class="danger" onRun={() => revoke(a)}>
                           Revoke
-                        </button>
+                        </Button>
                         <button type="button" onClick={() => setConfirming(undefined)}>
                           Cancel
                         </button>

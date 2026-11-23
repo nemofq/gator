@@ -10,7 +10,7 @@ import { ProviderPage } from "./pages/provider";
 import { Providers } from "./pages/providers";
 import { SettingsPage } from "./pages/settings";
 import { SignIn } from "./pages/sign-in";
-import { Icon, navigate, ProviderLinks, Segmented } from "./ui";
+import { Button, Icon, navigate, ProviderLinks, Segmented, useAction } from "./ui";
 
 const NAV = [
   ["/", "Overview"],
@@ -121,6 +121,7 @@ function App() {
   const [fatal, setFatal] = useState("");
   const [path, setPath] = useState(location.pathname);
   const main = useRef<HTMLElement>(null);
+  const out = useAction();
 
   const loadSession = () =>
     api<Session>("/api/session").then(
@@ -169,9 +170,9 @@ function App() {
           ))}
         </nav>
         <ThemeControl />
-        <button type="button" class="signout" onClick={signOut}>
+        <Button action={out} class="signout" onRun={signOut}>
           Sign out
-        </button>
+        </Button>
       </header>
       {unreadable.length > 0 && (
         <div class="banner" role="alert">

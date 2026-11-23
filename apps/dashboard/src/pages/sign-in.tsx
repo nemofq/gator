@@ -1,13 +1,13 @@
 import { useState } from "preact/hooks";
 import { api } from "../api";
-import { Alert, useAction } from "../ui";
+import { Alert, Button, useAction } from "../ui";
 
 export function SignIn(props: { onSignedIn: () => void }) {
   const [password, setPassword] = useState("");
-  const { busy, error, run } = useAction();
+  const action = useAction();
   const submit = (e: Event) => {
     e.preventDefault();
-    run(() => api("/api/login", "POST", { password }).then(props.onSignedIn));
+    action.run(() => api("/api/login", "POST", { password }).then(props.onSignedIn));
   };
   return (
     <main class="consent">
@@ -25,11 +25,11 @@ export function SignIn(props: { onSignedIn: () => void }) {
           value={password}
           onInput={(e) => setPassword(e.currentTarget.value)}
         />
-        {error && <Alert>{error}</Alert>}
+        {action.error && <Alert>{action.error}</Alert>}
         <div class="actions">
-          <button type="submit" class="primary" disabled={busy}>
+          <Button action={action} class="primary">
             Sign in
-          </button>
+          </Button>
         </div>
       </form>
     </main>

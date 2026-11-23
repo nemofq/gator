@@ -1,5 +1,5 @@
 import type { ComponentChildren, InputHTMLAttributes } from "preact";
-import { useState } from "preact/hooks";
+import { useId, useState } from "preact/hooks";
 import type { Provider } from "./api";
 
 export function navigate(to: string) {
@@ -107,6 +107,9 @@ const ICONS = {
   changed: <path d="M5 1.4 8.6 5 5 8.6 1.4 5z" />,
   write: <path d="M5 1.2 9.2 8.6H.8z" />,
   chevron: <path class="line" d="M3.6 1.6 7 5 3.6 8.4" />,
+  check: <path class="line" d="M.9 5.3 3.8 8.3 9.3 1.9" />,
+  // A little past the square, so a thin ring looks as large as the capitals.
+  ring: <circle class="line spin" cx="5" cy="5" r="5" pathLength="4" stroke-dasharray="3 1" />,
 };
 
 const TURN = { left: "180deg", down: "90deg", up: "-90deg" };
@@ -279,20 +282,82 @@ export function Alert(props: { children: ComponentChildren }) {
   );
 }
 
-/** Runs `action`, exposing whether it is running and the message it failed with. */
+/** Runs the actions of a group of controls, one at a time. It exposes whether one is running, the
+    message it failed with, and what the control that started it (`by`; a form's submit button when
+    left out) shows: nothing for 300 ms, so a quick action never flashes, then a ring; after a slow
+    success, a check for 1.5 s. An action that resolves `false` ran but did not succeed, and the
+    page says why: no check. */
 export function useAction() {
-  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const run = async (action: () => Promise<unknown>) => {
-    setBusy(true);
+  const [shown, setShown] = useState<{ by: string; icon?: "ring" | "check" }>();
+  const run = async (action: () => Promise<unknown>, by = "submit") => {
+    let slow = false;
+    const timer = setTimeout(() => {
+      slow = true;
+      setShown({ by, icon: "ring" });
+    }, 300);
+    setShown({ by });
     setError("");
     try {
-      await action();
+      if ((await action()) === false) slow = false;
     } catch (e) {
+      slow = false;
       setError((e as Error).message);
-    } finally {
-      setBusy(false);
     }
+    clearTimeout(timer);
+    const done = slow ? ({ by, icon: "check" } as const) : undefined;
+    setShown(done);
+    if (done) setTimeout(() => setShown((s) => (s === done ? undefined : s)), 1500);
   };
-  return { busy, error, run };
+  return { busy: shown !== undefined && shown.icon !== "check", error, run, shown };
+}
+
+type Action = ReturnType<typeof useAction>;
+
+/** A button that runs `onRun` with `action`, or without it submits its form, whose submit runs
+    `action`. While the action runs, every button of it is disabled; this one is busy, not faded,
+    and shows what `useAction` says before its label, announcing a success it marked. The label
+    alone and the label after the icon share one grid cell, the one not shown hidden: the button is
+    always as wide as the wider, so neither it nor anything beside it moves. */
+export function Button(props: {
+  action: Action;
+  onRun?: () => Promise<unknown>;
+  class?: string;
+  children: ComponentChildren;
+}) {
+  const { action, onRun } = props;
+  const id = useId();
+  const by = onRun ? id : "submit";
+  const mine = action.shown?.by === by ? action.shown : undefined;
+  return (
+    <>
+      <button
+        type={onRun ? "button" : "submit"}
+        class={props.class ? `act ${props.class}` : "act"}
+        disabled={action.busy}
+        aria-busy={action.busy && mine ? true : undefined}
+        onClick={onRun && (() => action.run(onRun, by))}
+      >
+        <span class={mine?.icon && "hide"}>{props.children}</span>
+        <span class={mine?.icon ? undefined : "hide"}>
+          <Icon name={mine?.icon ?? "check"} />
+          {props.children}
+        </span>
+      </button>
+      <span class="sr-only" role="status">
+        {mine?.icon === "check" && "Done"}
+      </span>
+    </>
+  );
+}
+
+/** The ring after a switch's label while the action it started (`by`) takes long; a switch cannot
+    hold it. After the label, so nothing moves. */
+export function Pending(props: { action: Action; by: string }) {
+  const { shown } = props.action;
+  return shown?.by === props.by && shown.icon === "ring" ? (
+    <span class="pending">
+      <Icon name="ring" />
+    </span>
+  ) : null;
 }

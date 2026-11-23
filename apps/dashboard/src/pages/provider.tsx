@@ -12,6 +12,7 @@ import {
 import {
   Alert,
   ago,
+  Button,
   breakable,
   category,
   Disclose,
@@ -19,6 +20,7 @@ import {
   KeyInput,
   navigate,
   num,
+  Pending,
   ProviderName,
   Stat,
   Switch,
@@ -66,16 +68,15 @@ function Review(props: { providerId: string; tool: Tool; onApproved: () => void 
   const path = `/api/providers/${encodeURIComponent(props.providerId)}/tools/${encodeURIComponent(props.tool.name)}`;
   const [open, setOpen] = useState(false);
   const [detail, setDetail] = useState<ToolDetail>();
-  const { busy, error, run } = useAction();
+  const action = useAction();
   const toggle = () => {
     setOpen(!open);
-    if (!detail) run(async () => setDetail(await api<ToolDetail>(path)));
+    if (!detail) action.run(async () => setDetail(await api<ToolDetail>(path)));
   };
-  const approve = () =>
-    run(async () => {
-      await api(path, "PATCH", { approve: true });
-      props.onApproved();
-    });
+  const approve = async () => {
+    await api(path, "PATCH", { approve: true });
+    props.onApproved();
+  };
   const { approved, latest } = detail ?? {};
 
   return (
@@ -85,11 +86,11 @@ function Review(props: { providerId: string; tool: Tool; onApproved: () => void 
         <Disclose open={open} controls={`diff-${props.tool.name}`} onClick={toggle}>
           Changes
         </Disclose>
-        <button type="button" class="primary" disabled={busy} onClick={approve}>
+        <Button action={action} class="primary" onRun={approve}>
           Approve
-        </button>
+        </Button>
       </div>
-      {error && <Alert>{error}</Alert>}
+      {action.error && <Alert>{action.error}</Alert>}
       {open && approved && latest && (
         <div class="diff" id={`diff-${props.tool.name}`}>
           {approved.read_only !== latest.read_only && (
@@ -141,10 +142,10 @@ function KeyForm(props: {
 }) {
   const { noun, last4 } = props;
   const [key, setKey] = useState("");
-  const { busy, error, run } = useAction();
+  const action = useAction();
   const submit = (e: Event) => {
     e.preventDefault();
-    run(() => props.save(key.trim()).then(() => setKey("")));
+    action.run(() => props.save(key.trim()).then(() => setKey("")));
   };
   return (
     <form onSubmit={submit}>
@@ -173,24 +174,24 @@ function KeyForm(props: {
           value={key}
           onInput={(e) => setKey(e.currentTarget.value)}
         />
-        <button type="submit" class="primary" disabled={busy}>
+        <Button action={action} class="primary">
           Save {noun}
-        </button>
+        </Button>
         {last4 !== null && (
-          <button type="button" disabled={busy} onClick={() => run(() => props.save(null))}>
+          <Button action={action} onRun={() => props.save(null)}>
             Remove {noun}
-          </button>
+          </Button>
         )}
       </div>
       <p class="hint">{props.children}</p>
-      {error && <Alert>{error}</Alert>}
+      {action.error && <Alert>{action.error}</Alert>}
     </form>
   );
 }
 
 function Keys(props: { p: ProviderDetail; patch: (body: object) => Promise<void> }) {
   const { p, patch } = props;
-  const { busy, error, run } = useAction();
+  const action = useAction();
   const since = p.switched_at === null ? "" : `, switched ${ago(p.switched_at)}`;
   return (
     <section class="panel">
@@ -201,17 +202,13 @@ function Keys(props: { p: ProviderDetail; patch: (body: object) => Promise<void>
             {`In use: ${p.on_backup ? "backup" : "primary"} key${since}`}
           </Tag>
           {p.on_backup && (
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => run(() => patch({ on_backup: false }))}
-            >
+            <Button action={action} onRun={() => patch({ on_backup: false })}>
               Switch back to primary
-            </button>
+            </Button>
           )}
         </div>
       )}
-      {error && <Alert>{error}</Alert>}
+      {action.error && <Alert>{action.error}</Alert>}
       {p.key_same && (
         <p class="note">
           <Icon name="changed" />
@@ -249,15 +246,15 @@ function Keys(props: { p: ProviderDetail; patch: (body: object) => Promise<void>
 function Setup(props: { p: ProviderDetail; connect: (key: string) => Promise<void> }) {
   const { p } = props;
   const [key, setKey] = useState("");
-  const { busy, error, run } = useAction();
+  const action = useAction();
   const submit = (e: Event) => {
     e.preventDefault();
-    run(() => props.connect(key.trim()));
+    action.run(() => props.connect(key.trim()));
   };
   const button = (
-    <button type="submit" class="primary" disabled={busy}>
+    <Button action={action} class="primary">
       Connect
-    </button>
+    </Button>
   );
   const paste = p.signup_url ? "Paste it here" : `Paste your ${p.name} API key here`;
   const field = (
@@ -302,7 +299,7 @@ function Setup(props: { p: ProviderDetail; connect: (key: string) => Promise<voi
       ) : (
         field
       )}
-      {error && <Alert>{error}</Alert>}
+      {action.error && <Alert>{action.error}</Alert>}
     </form>
   );
 }
@@ -418,7 +415,7 @@ function ToolChanges(props: {
   reload: () => void;
 }) {
   const { p } = props;
-  const { busy, error, run } = useAction();
+  const action = useAction();
   return (
     <section class="panel">
       <h2 class="display">Tool changes</h2>
@@ -426,8 +423,8 @@ function ToolChanges(props: {
         <Switch
           checked={p.review}
           label="Review tool changes"
-          disabled={busy}
-          onChange={(review) => run(() => props.patch({ review }))}
+          disabled={action.busy}
+          onChange={(review) => action.run(() => props.patch({ review }), "review")}
         />
         <span>
           <strong>Review {p.review ? "on" : "off"}</strong>
@@ -436,9 +433,10 @@ function ToolChanges(props: {
               ? ": a change to a switched-on tool waits for your approval."
               : ": changes apply at each refresh. Switch on to approve them first."}
           </span>
+          <Pending action={action} by="review" />
         </span>
       </div>
-      {error && <Alert>{error}</Alert>}
+      {action.error && <Alert>{action.error}</Alert>}
       {props.pending.length > 0 && (
         <>
           <h3 class="display">
@@ -473,6 +471,8 @@ function ToolChanges(props: {
   );
 }
 
+type Test = { ok: boolean; tools?: number; error?: string };
+
 /** Review first, then switched-on tools, then new ones (off until switched on), then the other
     switched-off ones, then removed ones; by name within. */
 const rank = (t: Tool, isNew: boolean) =>
@@ -483,7 +483,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
   const { data: p, error, set, reload } = useLoad<ProviderDetail>(base);
   // Only for the timeout field's default; the page does not wait for it.
   const { data: settings, error: settingsError } = useLoad<Settings>("/api/settings");
-  const [test, setTest] = useState<{ ok: boolean; tools?: number; error?: string }>();
+  const [test, setTest] = useState<Test>();
   const [timeout, setTimeoutMs] = useState<string>();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [turnedOn, setTurnedOn] = useState<string>();
@@ -491,6 +491,8 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
   // does not jump away while it is being switched; the next load sorts it into place.
   const [flipped, setFlipped] = useState<Record<string, boolean>>({});
   const action = useAction();
+  // While switching on or off (switching on lists its tools), the switch shows what was asked.
+  const [wanted, setWanted] = useState<boolean>();
   const toolAction = useAction();
   // Whether it opened not set up: off, with no key. Decided once, so switching it off or removing
   // its key here does not swap the page under the pointer.
@@ -536,6 +538,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
     props.refreshSession();
   };
   setup.current ??= !p.enabled && p.key_last4 === null;
+  const on = action.busy && action.shown?.by === "enabled" ? Boolean(wanted) : p.enabled;
   const toolPath = (t: Tool) => `${base}/tools/${encodeURIComponent(t.name)}`;
   const isOn = (t: Tool) => flipped[t.name] ?? t.enabled;
   const setTool = (tool: Tool, enabled: boolean) =>
@@ -543,7 +546,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
       await api(toolPath(tool), "PATCH", { enabled });
       setFlipped({ ...flipped, [tool.name]: enabled });
       setTurnedOn(enabled && p.custom && !tool.read_only ? tool.name : undefined);
-    });
+    }, tool.name);
   const isNew = (t: Tool) => fresh?.includes(t.name) ?? t.new;
   const tools = [...p.tool_list].sort(
     (a, b) => rank(a, isNew(a)) - rank(b, isNew(b)) || (a.name < b.name ? -1 : 1),
@@ -586,16 +589,20 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
         <h2 class="display">Connection</h2>
         <div class="row">
           <Switch
-            checked={p.enabled}
+            checked={on}
             label="Enabled"
             disabled={action.busy}
-            onChange={(enabled) => action.run(() => patch({ enabled }))}
+            onChange={(enabled) => {
+              setWanted(enabled);
+              action.run(() => patch({ enabled }), "enabled");
+            }}
           />
           <span>
-            <strong>{p.enabled ? "On" : "Off"}</strong>
+            <strong>{on ? "On" : "Off"}</strong>
             <span class="dim">
-              {p.enabled ? ": agents can find its tools." : ": agents do not see its tools."}
+              {on ? ": agents can find its tools." : ": agents do not see its tools."}
             </span>
+            <Pending action={action} by="enabled" />
           </span>
         </div>
         {p.status === "attention" && (
@@ -604,25 +611,27 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
           </p>
         )}
         <div class="row">
-          <button
-            type="button"
-            disabled={action.busy}
-            onClick={() =>
-              action.run(async () => {
-                set(await api(`${base}/refresh`, "POST"));
-                setFlipped({});
-              })
-            }
+          <Button
+            action={action}
+            onRun={async () => {
+              const listed = await api<ProviderDetail>(`${base}/refresh`, "POST");
+              set(listed);
+              setFlipped({});
+              return !listed.refresh_error;
+            }}
           >
             Refresh tools
-          </button>
-          <button
-            type="button"
-            disabled={action.busy}
-            onClick={() => action.run(async () => setTest(await api(`${base}/test`, "POST")))}
+          </Button>
+          <Button
+            action={action}
+            onRun={async () => {
+              const result = await api<Test>(`${base}/test`, "POST");
+              setTest(result);
+              return result.ok;
+            }}
           >
             Test connection
-          </button>
+          </Button>
           <span role="status">
             {test &&
               (test.ok ? (
@@ -661,9 +670,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
               value={timeout ?? p.timeout_ms ?? ""}
               onInput={(e) => setTimeoutMs(e.currentTarget.value)}
             />
-            <button type="submit" disabled={action.busy}>
-              Save
-            </button>
+            <Button action={action}>Save</Button>
           </div>
           <p class="hint">Leave empty to use the default from Settings.</p>
         </form>
@@ -709,6 +716,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
                 {t.status === "changed" && <Tag kind="changed">changed</Tag>}
                 {t.status === "removed" && <Tag kind="error">removed by the provider</Tag>}
                 {p.custom && !t.read_only && <Tag kind="write">can make changes</Tag>}
+                <Pending action={toolAction} by={t.name} />
                 <Description path={toolPath(t)} tool={t} />
                 {turnedOn === t.name && (
                   <p class="note" role="status">
@@ -728,19 +736,16 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
           {confirmDelete ? (
             <p class="row">
               Delete {p.name} and its tools?
-              <button
-                type="button"
+              <Button
+                action={action}
                 class="danger"
-                disabled={action.busy}
-                onClick={() =>
-                  action.run(async () => {
-                    await api(base, "DELETE");
-                    navigate("/providers");
-                  })
-                }
+                onRun={async () => {
+                  await api(base, "DELETE");
+                  navigate("/providers");
+                }}
               >
                 Delete
-              </button>
+              </Button>
               <button type="button" onClick={() => setConfirmDelete(false)}>
                 Cancel
               </button>

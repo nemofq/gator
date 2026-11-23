@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import { api, type Session, type Settings, signOut, useLoad } from "../api";
-import { Alert, CopyLine, num, Path, ProviderLinks, Tag, useAction } from "../ui";
+import { Alert, Button, CopyLine, num, Path, ProviderLinks, Tag, useAction } from "../ui";
 
 /** The Worker's name when the dashboard is served at <name>.<account>.workers.dev; else unknown. */
 const workerName = (host: string) => /^([a-z0-9-]+)\.[a-z0-9-]+\.workers\.dev$/.exec(host)?.[1];
@@ -9,7 +9,8 @@ export function SettingsPage(props: { session: Session }) {
   const { data, error } = useLoad<Settings>("/api/settings");
   const [edited, setEdited] = useState<Settings>();
   const [saved, setSaved] = useState(false);
-  const { busy, error: saveError, run } = useAction();
+  const action = useAction();
+  const out = useAction();
   const form = edited ?? data;
   const unreadable = props.session.keys_unreadable;
   const worker = workerName(location.hostname);
@@ -30,7 +31,7 @@ export function SettingsPage(props: { session: Session }) {
   });
   const save = (e: Event) => {
     e.preventDefault();
-    run(async () => {
+    action.run(async () => {
       setEdited(await api<Settings>("/api/settings", "PATCH", form));
       setSaved(true);
     });
@@ -62,11 +63,11 @@ export function SettingsPage(props: { session: Session }) {
           <label for="timeout_ms">Provider timeout (ms)</label>
           <input {...field("timeout_ms")} min={1000} max={120000} step={1000} />
           <p class="hint">How long to wait for a provider. 1,000 to 120,000.</p>
-          {saveError && <Alert>{saveError}</Alert>}
+          {action.error && <Alert>{action.error}</Alert>}
           <div class="row">
-            <button type="submit" class="primary" disabled={busy}>
+            <Button action={action} class="primary">
               Save
-            </button>
+            </Button>
             <span role="status">{saved && "Saved."}</span>
           </div>
         </form>
@@ -122,9 +123,10 @@ export function SettingsPage(props: { session: Session }) {
       <section class="panel">
         <h2 class="display">Session</h2>
         <p class="hint">Signed in on this browser for up to seven days.</p>
-        <button type="button" onClick={signOut}>
+        <Button action={out} onRun={signOut}>
           Sign out
-        </button>
+        </Button>
+        {out.error && <Alert>{out.error}</Alert>}
       </section>
       <footer class="foot">
         <span>gator {props.session.version}</span>

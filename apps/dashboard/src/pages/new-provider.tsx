@@ -1,7 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 import { api, type Problem, type Provider } from "../api";
 import { loadCore } from "../core";
-import { Alert, Icon, KeyInput, navigate, useAction } from "../ui";
+import { Alert, Button, Icon, KeyInput, navigate, useAction } from "../ui";
 
 type Form = {
   name: string;
@@ -66,7 +66,7 @@ export function NewProvider() {
   const [touched, setTouched] = useState(new Set<string>());
   const [problems, setProblems] = useState<Problem[]>([]);
   const [validate, setValidate] = useState<(manifest: string) => string>();
-  const { busy, error, run } = useAction();
+  const action = useAction();
 
   useEffect(() => {
     loadCore().then((core) => setValidate(() => core.validate_provider));
@@ -82,7 +82,7 @@ export function NewProvider() {
   const submit = (e: Event) => {
     e.preventDefault();
     setTouched(new Set(FIELDS.map((f) => f[0])));
-    run(async () => {
+    action.run(async () => {
       try {
         const p = await api<Provider>("/api/providers", "POST", {
           ...manifest(form),
@@ -152,11 +152,11 @@ export function NewProvider() {
               <span class="mono">{p.path}</span>: {p.message}
             </p>
           ))}
-        {error && <Alert>{error}</Alert>}
+        {action.error && <Alert>{action.error}</Alert>}
         <div class="row">
-          <button type="submit" class="primary" disabled={busy}>
+          <Button action={action} class="primary">
             Add provider
-          </button>
+          </Button>
         </div>
       </form>
     </>
