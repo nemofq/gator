@@ -15,8 +15,7 @@ export function SignIn(props: { onSignedIn: () => void }) {
         <span class="mark" aria-hidden="true" />
         <span class="word">GATOR</span>
       </div>
-      <h1>Sign in</h1>
-      <form onSubmit={submit}>
+      <form onSubmit={submit} aria-label="Sign in">
         <label for="password">Owner password</label>
         <input
           id="password"

@@ -48,8 +48,15 @@
   margin-right: -0.2em;
 }
 
+/* The mark reaches 15/62 of a cap above the capitals; this margin keeps it inside the padding, so
+   the card's edge is the same distance from the mark as from whatever ends the card. */
 .consent .brand {
-  margin-bottom: 24px;
+  margin: calc(1cap * 15 / 62) 0 24px;
+}
+
+.consent > :last-child,
+.consent > :last-child > :last-child {
+  margin-bottom: 0;
 }
 
 .consent h1 {
