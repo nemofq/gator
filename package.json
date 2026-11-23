@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "packageManager": "pnpm@12.17.0",
+  "packageManager": "pnpm@12.23.0",
   "engines": {
     "node": ">=22.12"
   },
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
     "typescript": "7.0.2",
-    "wrangler": "4.165.0"
+    "wrangler": "4.166.0"
   },
   "cloudflare": {
     "bindings": {
