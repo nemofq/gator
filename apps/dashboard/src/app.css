@@ -205,8 +205,14 @@ input[aria-invalid="true"] {
   border-color: var(--danger);
 }
 
-input[type="password"] {
+input[type="password"],
+input.key {
   font-family: var(--font-mono);
+}
+
+/* An API key (ui.tsx KeyInput) is masked like a password. */
+input.key {
+  -webkit-text-security: disc;
 }
 
 input::placeholder {
@@ -966,6 +972,12 @@ td:last-child {
   margin: 0;
   padding-left: 1.4em;
   line-height: 1.9;
+}
+
+/* A field in a step (provider.tsx Setup) keeps the page's line height. */
+.start .row,
+.start .hint {
+  line-height: 1.5;
 }
 
 /* Providers */

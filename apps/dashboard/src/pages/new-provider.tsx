@@ -1,7 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 import { api, type Problem, type Provider } from "../api";
 import { loadCore } from "../core";
-import { Alert, Icon, navigate, useAction } from "../ui";
+import { Alert, Icon, KeyInput, navigate, useAction } from "../ui";
 
 type Form = {
   name: string;
@@ -129,7 +129,7 @@ export function NewProvider() {
             <div key={field} class="field">
               <label for={field}>{label}</label>
               {field === "key" ? (
-                <input type="password" {...input} />
+                <KeyInput {...input} />
               ) : (
                 <input type="text" inputMode={field === "mcp_url" ? "url" : undefined} {...input} />
               )}

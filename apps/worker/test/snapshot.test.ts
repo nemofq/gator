@@ -169,7 +169,8 @@ describe("refresh", () => {
     await refresh(env, id);
     const before = await version();
     upstream.key = ["X-Key", "missing"];
-    const rejected = `Name ${id} rejected its API key. Update the key in the Gator dashboard.`;
+    // Refresh errors are for the owner, already in the dashboard; agents' errors say where to go.
+    const rejected = `Name ${id} rejected this API key. Check it and try again.`;
     const tried = Date.now();
     expect(await refresh(env, id)).toBe(rejected);
     const row = await env.DB.prepare(

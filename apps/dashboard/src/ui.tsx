@@ -1,4 +1,4 @@
-import type { ComponentChildren } from "preact";
+import type { ComponentChildren, InputHTMLAttributes } from "preact";
 import { useState } from "preact/hooks";
 import type { Provider } from "./api";
 
@@ -252,6 +252,22 @@ export function ProviderLinks(props: { providers: { id: string; name: string }[]
       <a href={`/providers/${encodeURIComponent(p.id)}`}>{p.name}</a>
     </span>
   ));
+}
+
+/** An API key field: text masked by CSS, not type="password". Browsers fill a saved password into
+    any password field, whatever its autocomplete says, and offer to save what is typed there. */
+export function KeyInput(props: Omit<InputHTMLAttributes, "type" | "class" | "role">) {
+  return (
+    <input
+      {...props}
+      type="text"
+      class="key"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck={false}
+    />
+  );
 }
 
 export function Alert(props: { children: ComponentChildren }) {

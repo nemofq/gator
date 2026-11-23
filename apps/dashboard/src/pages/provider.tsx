@@ -2,6 +2,7 @@ import type { ComponentChildren } from "preact";
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import {
   api,
+  type Provider,
   type ProviderDetail,
   type Settings,
   type Tool,
@@ -15,6 +16,7 @@ import {
   category,
   Disclose,
   Icon,
+  KeyInput,
   navigate,
   num,
   ProviderName,
@@ -127,6 +129,8 @@ function Review(props: { providerId: string; tool: Tool; onApproved: () => void 
   );
 }
 
+const STORED = "Stored encrypted. Only its last four characters are shown again.";
+
 function KeyForm(props: {
   id: string;
   noun: "key" | "backup key";
@@ -162,11 +166,8 @@ function KeyForm(props: {
         <p class="hint">Gator cannot read it: the encryption key has changed. Enter it again.</p>
       )}
       <div class="row">
-        <input
+        <KeyInput
           id={props.id}
-          type="password"
-          autocomplete="off"
-          spellcheck={false}
           required
           placeholder={last4 === null ? "" : `A new ${noun} replaces the saved one`}
           value={key}
@@ -227,7 +228,7 @@ function Keys(props: { p: ProviderDetail; patch: (body: object) => Promise<void>
             {". "}
           </>
         )}
-        {p.key_hint ?? "Stored encrypted. Only its last four characters are shown again."}
+        {p.key_hint ?? STORED}
       </KeyForm>
       {(p.key_last4 !== null || p.backup_last4 !== null) && (
         <KeyForm
@@ -241,6 +242,68 @@ function Keys(props: { p: ProviderDetail; patch: (body: object) => Promise<void>
         </KeyForm>
       )}
     </section>
+  );
+}
+
+/** The page of a provider that is off and has no key: how to connect it, and nothing else. */
+function Setup(props: { p: ProviderDetail; connect: (key: string) => Promise<void> }) {
+  const { p } = props;
+  const [key, setKey] = useState("");
+  const { busy, error, run } = useAction();
+  const submit = (e: Event) => {
+    e.preventDefault();
+    run(() => props.connect(key.trim()));
+  };
+  const button = (
+    <button type="submit" class="primary" disabled={busy}>
+      Connect
+    </button>
+  );
+  const paste = p.signup_url ? "Paste it here" : `Paste your ${p.name} API key here`;
+  const field = (
+    <>
+      <span id="setup-key-label">
+        {p.key_required ? `${paste}.` : `${paste}, or leave it empty.`}
+      </span>
+      <div class="row">
+        <KeyInput
+          id="setup-key"
+          aria-labelledby="setup-key-label"
+          aria-describedby="setup-key-hint"
+          required={p.key_required}
+          value={key}
+          onInput={(e) => setKey(e.currentTarget.value)}
+        />
+        {button}
+      </div>
+      <p class="hint" id="setup-key-hint">
+        {p.key_hint ?? STORED}
+      </p>
+    </>
+  );
+  return (
+    <form class="panel start" onSubmit={submit}>
+      <h2 class="display">Set up {p.name}</h2>
+      {!p.key_required && !p.auth ? (
+        <>
+          <p>It needs no API key. Connect lists its tools for your agents.</p>
+          <div class="row">{button}</div>
+        </>
+      ) : p.signup_url ? (
+        <ol>
+          <li>
+            <a href={p.signup_url} target="_blank" rel="noopener noreferrer">
+              Get an API key
+            </a>{" "}
+            from {p.name}.
+          </li>
+          <li>{field}</li>
+        </ol>
+      ) : (
+        field
+      )}
+      {error && <Alert>{error}</Alert>}
+    </form>
   );
 }
 
@@ -429,6 +492,9 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
   const [flipped, setFlipped] = useState<Record<string, boolean>>({});
   const action = useAction();
   const toolAction = useAction();
+  // Whether it opened not set up: off, with no key. Decided once, so switching it off or removing
+  // its key here does not swap the page under the pointer.
+  const setup = useRef<boolean>(undefined);
   // The tools that were new when the page opened keep their tag until the owner leaves it. Opening
   // the page marks them seen once it is visible; a failure is not the owner's doing, so it is silent.
   const [fresh, setFresh] = useState<string[]>();
@@ -457,6 +523,19 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
     await patch(body);
     props.refreshSession();
   };
+  // Switching it on lists its tools in the same request; a failed listing is saved, not an HTTP
+  // error, so it is undone here and its reason thrown.
+  const connect = async (key: string) => {
+    const on = await api<Provider>(base, "PATCH", key ? { key, enabled: true } : { enabled: true });
+    if (on.refresh_error) {
+      await api(base, "PATCH", key ? { enabled: false, key: null } : { enabled: false });
+      throw new Error(on.refresh_error);
+    }
+    setup.current = false;
+    await reload();
+    props.refreshSession();
+  };
+  setup.current ??= !p.enabled && p.key_last4 === null;
   const toolPath = (t: Tool) => `${base}/tools/${encodeURIComponent(t.name)}`;
   const isOn = (t: Tool) => flipped[t.name] ?? t.enabled;
   const setTool = (tool: Tool, enabled: boolean) =>
@@ -471,7 +550,7 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
   );
   const live = tools.filter((t) => t.status !== "removed");
 
-  return (
+  const head = (
     <>
       <a class="back" href="/providers">
         <Icon name="chevron" turn="left" />
@@ -489,6 +568,19 @@ export function ProviderPage(props: { id: string; refreshSession: () => void }) 
         )}
       </div>
       <p class="lead">{p.description}</p>
+    </>
+  );
+  if (setup.current)
+    return (
+      <>
+        {head}
+        <Setup p={p} connect={connect} />
+      </>
+    );
+
+  return (
+    <>
+      {head}
 
       <section class="panel">
         <h2 class="display">Connection</h2>

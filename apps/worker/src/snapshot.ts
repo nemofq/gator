@@ -212,7 +212,10 @@ export function approvePending(db: D1Database, id: string): D1PreparedStatement 
 }
 
 /** Anything but an upstream failure means the core could not read the tool list. */
+/** For the owner, in the dashboard: agents never see refresh errors. */
 function refreshError(error: unknown, provider: string): string {
+  if (error instanceof UpstreamError && error.status === "auth")
+    return `${provider} rejected this API key. Check it and try again.`;
   if (error instanceof UpstreamError) return errorText(error.status, "", provider, error.message);
   return errorText("upstream_error", "", provider, "a tool list Gator cannot read");
 }
