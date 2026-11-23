@@ -37,7 +37,9 @@ if (tracked) {
   try {
     git("pull", "--ff-only", "--quiet");
   } catch {
-    fail(`This clone and ${tracked} have both changed. Bring them together with git, then run this again.`);
+    fail(
+      `This clone and ${tracked} have both changed. Bring them together with git, then run this again.`,
+    );
   }
 }
 
