@@ -175,10 +175,10 @@ describe("discovery", () => {
   it("challenges an unauthenticated /mcp and publishes both metadata documents", async () => {
     const challenge = await send("/mcp", { method: "POST", body: "{}" });
     expect(challenge.status).toBe(401);
-    expect(challenge.headers.get("WWW-Authenticate")).toMatch(
-      new RegExp(
-        `^Bearer .*resource_metadata="${ORIGIN}/.well-known/oauth-protected-resource/mcp"`,
-      ),
+    const challenged = challenge.headers.get("WWW-Authenticate") ?? "";
+    expect(challenged.startsWith("Bearer ")).toBe(true);
+    expect(challenged).toContain(
+      `resource_metadata="${ORIGIN}/.well-known/oauth-protected-resource/mcp"`,
     );
     const resource = await (await send("/.well-known/oauth-protected-resource/mcp")).json<
       Record<string, unknown>
