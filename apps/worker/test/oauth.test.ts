@@ -209,7 +209,7 @@ describe("authorization code flow", () => {
     expect(page.html).toContain("Claude &#60;script&#62;alert(&#34;x&#34;)&#60;/script&#62;");
     expect(page.html).not.toContain("<script>alert");
     expect(page.html).toContain('<code class="host">claude.ai</code>');
-    expect(page.html).not.toContain("an app on this computer");
+    expect(page.html).not.toContain("This computer");
     expect(page.html).toContain('type="password"');
     expect(page.html).toMatch(
       /href="\/theme.css"[\s\S]*href="\/authorize.css"[\s\S]*src="\/theme.js"/,
@@ -247,7 +247,7 @@ describe("authorization code flow", () => {
       const page = await open(flow);
       expect(page.html).toContain('<strong class="client">Claude Code</strong>');
       expect(page.html).toContain('<code class="host">claude.ai</code>'); // the published domain
-      expect(page.html).toContain("This is an app on this computer.");
+      expect(page.html).toContain("<dt>Returns to</dt><dd>This computer</dd>");
       const { access_token } = await connect(flow);
       expect((await mcp(access_token, "tools/list")).status).toBe(200);
     }

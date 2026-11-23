@@ -70,6 +70,27 @@
   font-weight: 600;
 }
 
+/* What the owner checks before approving: who published the client and where it returns. */
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border-radius: var(--radius-control);
+  font-size: 0.9em;
+}
+
+.facts dt {
+  color: var(--text-2);
+}
+
+.facts dd {
+  margin: 0;
+  min-width: 0;
+}
+
 .host {
   font-family: var(--font-mono);
   overflow-wrap: anywhere;
@@ -85,6 +106,10 @@
   content: "! ";
   font-weight: 700;
   color: var(--danger);
+}
+
+.facts + .warning {
+  margin-top: 16px;
 }
 
 .consent label {

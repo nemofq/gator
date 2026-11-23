@@ -95,27 +95,28 @@ function consentBody(
   signedIn: boolean,
   message: string,
 ): string {
-  const lines = [
-    `<p>Client: <strong class="client">${html(details.clientName)}</strong></p>`,
+  // A loopback address means nothing to most people; where it leads does.
+  const returns = details.redirectIsLoopback
+    ? "This computer"
+    : `<code class="host">${html(details.redirectHost)}</code>`;
+  const facts = [
     details.clientDomain
-      ? `<p class="note">Published by <code class="host">${html(details.clientDomain)}</code></p>`
+      ? `<dt>Published by</dt><dd><code class="host">${html(details.clientDomain)}</code></dd>`
       : "",
-    `<p>Returns to <code class="host">${html(details.redirectHost)}</code></p>`,
-    details.redirectIsLoopback ? `<p class="note">This is an app on this computer.</p>` : "",
-    message ? `<p class="warning">${message}</p>` : "",
+    `<dt>Returns to</dt><dd>${returns}</dd>`,
   ];
   const password = signedIn
     ? ""
     : `<label for="password">Owner password</label>
 <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>`;
-  return `<h1>Connect an agent</h1>
-${lines.filter(Boolean).join("\n")}
+  return `<p><strong class="client">${html(details.clientName)}</strong> wants to use your Gator. Approve only if you started this.</p>
+<dl class="facts">${facts.join("")}</dl>
+${message ? `<p class="warning">${message}</p>` : ""}
 <form method="post">
 <input type="hidden" name="handle" value="${html(handle)}">
 ${password}
 <div class="actions"><button class="primary" name="decision" value="approve">Approve</button><button name="decision" value="deny" formnovalidate>Deny</button></div>
-</form>
-<p class="warning">Approve only if you started this.</p>`;
+</form>`;
 }
 
 function errorPage(message: string): Response {
