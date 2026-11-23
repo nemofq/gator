@@ -24,9 +24,12 @@ env:
     crates/core-wasm/pkg/sources.sha256
     catalog/catalog.json
 
+# Every job runs only in this repository. A copy made by the Deploy to Cloudflare button holds this
+# file too, and Cloudflare builds it without these checks: there they would only fail on the IDs
+# Cloudflare writes into wrangler.jsonc. Pull requests from forks run here, so they are checked.
 jobs:
   generated-files:
-    if: github.event_name == 'pull_request'
+    if: github.repository == 'nemofq/gator' && github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -43,6 +46,7 @@ jobs:
           fi
 
   rust:
+    if: github.repository == 'nemofq/gator'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -56,6 +60,7 @@ jobs:
       - run: cargo test --workspace
 
   javascript:
+    if: github.repository == 'nemofq/gator'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -98,7 +103,7 @@ jobs:
   # with this token starts no new run, so the job checks its own push. It succeeds either way and
   # says in its summary whether it committed.
   publish:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.repository == 'nemofq/gator' && github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
