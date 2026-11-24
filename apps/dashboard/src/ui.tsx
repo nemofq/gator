@@ -109,6 +109,9 @@ export function ProviderName(props: { p: Provider }) {
 
 // Every icon is drawn in a 10-unit square, one cap height tall, standing on the baseline: so it
 // centres on the capitals beside it in any font.
+/** Where Gator lives. */
+export const REPO = "https://github.com/nemofq/gator";
+
 const ICONS = {
   ok: <circle cx="5" cy="5" r="3" />,
   off: <circle class="line" cx="5" cy="5" r="2.6" />,

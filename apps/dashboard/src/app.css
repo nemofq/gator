@@ -447,9 +447,9 @@ input[type="number"] {
   pointer-events: none;
 }
 
-/* Header: one bar at every width. As it narrows (see the breakpoints at the end), Sign out leaves
-   (Settings has it), the theme control becomes one button, the brand keeps only its mark, and the
-   nav tightens. */
+/* Header: one bar at every width. As it narrows (see the breakpoints at the end), Sign out and the
+   link to the repository leave (Settings has both), the theme control becomes one button, the brand
+   keeps only its mark, and the nav tightens. */
 
 .top {
   display: flex;
@@ -503,7 +503,19 @@ input[type="number"] {
   color: var(--text-2);
 }
 
+/* The link to the repository: a mark in a 40 px target, drawn back so the mark keeps the bar's gap. */
+.top .repo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  min-height: 40px;
+  margin: 0 -11px;
+  color: var(--text-2);
+}
+
 .top nav a:hover,
+.top .repo:hover,
 .top button:hover:enabled {
   color: var(--text);
   background: none;
@@ -1411,7 +1423,8 @@ ins,
 }
 
 @media (max-width: 899px) {
-  .top .signout {
+  .top .signout,
+  .top .repo {
     display: none;
   }
   /* Tables stack each row; recent calls take a fixed order: time and latency, the tool, the agent

@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import { api, type Session, type Settings, signOut, useLoad } from "../api";
-import { Alert, Button, CopyLine, num, Path, ProviderLinks, Tag, useAction } from "../ui";
+import { Alert, Button, CopyLine, num, Path, ProviderLinks, REPO, Tag, useAction } from "../ui";
 
 /** The Worker's name when the dashboard is served at <name>.<account>.workers.dev; else unknown. */
 const workerName = (host: string) => /^([a-z0-9-]+)\.[a-z0-9-]+\.workers\.dev$/.exec(host)?.[1];
@@ -123,7 +123,12 @@ export function SettingsPage(props: { session: Session }) {
         {out.error && <Alert>{out.error}</Alert>}
       </section>
       <footer class="foot">
-        <span>gator {props.session.version}</span>
+        <span>
+          gator {props.session.version} ·{" "}
+          <a href={REPO} target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+        </span>
         <span>Written in Rust. Gators eat pythons.</span>
       </footer>
     </>
