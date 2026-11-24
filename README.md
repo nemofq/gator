@@ -15,7 +15,7 @@ Gator puts all the data MCP servers your agents need behind one endpoint. You st
 
 **Agents are missing data.** Ask yours to research a purchase, and Amazon blocks it. Ask it for what real users think, and Reddit has shut down its RSS feeds. Ask it about a project on GitHub, and the public API leaves things out and limits how often it can ask.
 
-**Every agent needs its own setup.** You probably use several agents: a chat app, a coding agent, something on your phone, something you built. Each data MCP has to be set up in every one of them, and every change means doing it all again in each place.
+**Every agent needs its own setup.** Plenty of data MCPs are out there to fill the gap. However, you probably use several agents: a chat app, a coding agent, a personal agent on your phone, something you built. Each MCP has to be set up in every one of them, and every change means doing it all again in each place.
 
 Gator fixes both.
 
@@ -27,20 +27,44 @@ Gator fixes both.
 
 ## What you get
 
-- **One endpoint, one sign-in.** An MCP URL protected by OAuth, for Claude, Codex or any agent.
-- **A catalog of providers.** Enable one, paste its key, done. Or add any other MCP server that takes a key in a header.
-- **A dashboard.** See what each agent calls, how often, and what failed. Switch individual tools on or off from the same place.
-- **No surprise tool changes.** When a provider adds or changes a tool, you see it. New tools stay off until you turn them on, and you can choose to approve changes before your agents see them.
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/providers-dark.webp">
-  <img src=".github/screenshots/providers-light.webp" alt="Providers: each one's status and how many of its tools are on">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/agents-dark.webp">
-  <img src=".github/screenshots/agents-light.webp" alt="Agents: each connected agent, when it was last used and its calls">
-</picture>
+<table>
+  <tr>
+    <td width="32%"><strong>One endpoint, one sign-in.</strong> An MCP URL protected by OAuth, for Claude, Codex or any agent.</td>
+    <td>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/agents-dark.webp">
+        <img src=".github/screenshots/agents-light.webp" alt="The Agents page: each connected agent, when it was last used and its calls">
+      </picture>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>A catalog of providers.</strong> Enable one, paste its key, done. Or add any other MCP server that takes a key in a header.</td>
+    <td>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/providers-dark.webp">
+        <img src=".github/screenshots/providers-light.webp" alt="Six provider cards, each with its status and how many of its tools are on">
+      </picture>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>A dashboard.</strong> See what each agent calls, how often, and what failed. Switch individual tools on or off from the same place.</td>
+    <td>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/recent-dark.webp">
+        <img src=".github/screenshots/recent-light.webp" alt="Recent calls: the time, agent, tool, status, latency and size of each">
+      </picture>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>No surprise tool changes.</strong> When a provider adds or changes a tool, you see it. New tools stay off until you turn them on, and you can choose to approve changes before your agents see them.</td>
+    <td>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/tools-dark.webp">
+        <img src=".github/screenshots/tools-light.webp" alt="A provider's tools with their switches; a new tool is marked and switched off">
+      </picture>
+    </td>
+  </tr>
+</table>
 
 ## Quick start
 
