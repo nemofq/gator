@@ -17,9 +17,9 @@
     "check": "biome check && pnpm -r typecheck"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.8",
+    "@biomejs/biome": "2.6.9",
     "typescript": "7.0.2",
-    "wrangler": "4.166.0"
+    "wrangler": "4.168.0"
   },
   "cloudflare": {
     "bindings": {
